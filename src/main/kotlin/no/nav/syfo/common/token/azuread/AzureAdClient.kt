@@ -20,20 +20,20 @@ public class AzureAdClient(
     private val azureEnvironment: AzureEnvironment,
     private val httpClient: HttpClient = proxyHttpClient()
 ) : OboTokenProvider {
-    override suspend fun getOnBehalfOfToken(scopeClientId: String, token: String): String? = getAccessToken(
+    override suspend fun getOnBehalfOfToken(targetClientId: String, token: String): String? = getAccessToken(
         Parameters.build {
             append("client_id", azureEnvironment.appClientId)
             append("client_secret", azureEnvironment.appClientSecret)
             append("client_assertion_type", "urn:ietf:params:oauth:grant-type:jwt-bearer")
             append("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer")
             append("assertion", token)
-            append("scope", "api://$scopeClientId/.default")
+            append("scope", "api://$targetClientId/.default")
             append("requested_token_use", "on_behalf_of")
         }
     )?.toAzureAdToken()?.accessToken
 
-    public suspend fun getSystemToken(scopeClientId: String): AzureAdToken? {
-        val cacheKey = "${CACHE_AZUREAD_TOKEN_SYSTEM_KEY_PREFIX}$scopeClientId"
+    public suspend fun getSystemToken(targetClientId: String): AzureAdToken? {
+        val cacheKey = "${CACHE_AZUREAD_TOKEN_SYSTEM_KEY_PREFIX}$targetClientId"
         val cachedToken = cache.get(key = cacheKey)
         return if (cachedToken?.isExpired() == false) {
             COUNT_CALL_AZUREAD_SYSTEM_TOKEN_CACHE_HIT.increment()
@@ -45,7 +45,7 @@ public class AzureAdClient(
                     append("client_id", azureEnvironment.appClientId)
                     append("client_secret", azureEnvironment.appClientSecret)
                     append("grant_type", "client_credentials")
-                    append("scope", "api://$scopeClientId/.default")
+                    append("scope", "api://$targetClientId/.default")
                 }
             )
             azureAdTokenResponse?.let { token ->

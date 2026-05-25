@@ -30,13 +30,13 @@ public class EntraIdClient(
     private val httpClient: HttpClient = defaultHttpClient()
 ) : OboTokenProvider {
     /**
-     * Exchanges the veileder's incoming token for an OBO token scoped to the given [scopeClientId].
+     * Exchanges the veileder's incoming token for an OBO token scoped to the given [targetClientId].
      *
-     * @param scopeClientId The Nais scope identifier for the target API, e.g. `api://<cluster>.<namespace>.<app>/.default`.
+     * @param targetClientId The client ID of the target API in `<cluster>.<namespace>.<app>` format, e.g. `dev-fss.teamsykefravr.istilgangskontroll`. The `api://` prefix and `/.default` suffix are added internally.
      * @param token The veileder's incoming Bearer token (without the "Bearer " prefix).
      * @return The OBO access token string, or null on error.
      */
-    override suspend fun getOnBehalfOfToken(scopeClientId: String, token: String): String? =
+    override suspend fun getOnBehalfOfToken(targetClientId: String, token: String): String? =
         try {
             val response = httpClient.post(tokenExchangeEndpoint) {
                 accept(ContentType.Application.Json)
@@ -44,7 +44,7 @@ public class EntraIdClient(
                 setBody(
                     EntraIdTokenExchangeRequest(
                         identityProvider = IDENTITY_PROVIDER,
-                        target = scopeClientId,
+                        target = "api://$targetClientId/.default",
                         userToken = token
                     )
                 )
@@ -65,13 +65,13 @@ public class EntraIdClient(
         }
 
     /**
-     * Acquires an M2M (client credentials) token scoped to the given [scopeClientId].
+     * Acquires an M2M (client credentials) token scoped to the given [targetClientId].
      * Token caching is handled by Texas (Nais sidecar).
      *
-     * @param scopeClientId The Nais scope identifier for the target API, e.g. `api://<cluster>.<namespace>.<app>/.default`.
+     * @param targetClientId The client ID of the target API in `<cluster>.<namespace>.<app>` format. The `api://` prefix and `/.default` suffix are added internally.
      * @return The access token string, or null on error.
      */
-    public suspend fun getSystemToken(scopeClientId: String): String? =
+    public suspend fun getSystemToken(targetClientId: String): String? =
         try {
             val response = httpClient.post(tokenEndpoint) {
                 accept(ContentType.Application.Json)
@@ -79,7 +79,7 @@ public class EntraIdClient(
                 setBody(
                     EntraIdTokenRequest(
                         identityProvider = IDENTITY_PROVIDER,
-                        target = scopeClientId
+                        target = "api://$targetClientId/.default",
                     )
                 )
             }

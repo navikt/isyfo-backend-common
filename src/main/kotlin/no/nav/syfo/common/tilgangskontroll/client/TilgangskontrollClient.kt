@@ -42,7 +42,7 @@ public class TilgangskontrollClient(
 
     private suspend fun getTilgang(callId: String, personIdent: String, token: String): Tilgang? {
         val onBehalfOfToken = oboTokenProvider.getOnBehalfOfToken(
-            scopeClientId = config.clientId,
+            targetClientId = config.clientId,
             token = token
         ) ?: throw RuntimeException("Failed to request access to Person: Failed to get OBO token")
 
@@ -116,7 +116,7 @@ public class TilgangskontrollClient(
         callId: String
     ): List<String>? {
         val oboToken = oboTokenProvider.getOnBehalfOfToken(
-            scopeClientId = config.clientId,
+            targetClientId = config.clientId,
             token = token
         ) ?: throw RuntimeException("Failed to request access to list of persons: Failed to get OBO token")
 

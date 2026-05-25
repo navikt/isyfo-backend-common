@@ -165,7 +165,7 @@ class VeilederPersonerAccessTest {
 
         io.mockk.coVerify {
             oboTokenProvider.getOnBehalfOfToken(
-                scopeClientId = config.clientId,
+                targetClientId = config.clientId,
                 token = token
             )
         }
