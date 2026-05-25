@@ -70,10 +70,11 @@ Without this, library counters will not be visible at the `/metrics` endpoint an
 
 ### Releasing a new version
 
-1. Bump `version` in `build.gradle.kts`
-2. Update changelog.
-3. Merge PR with the changes to `main`.
-4. Trigger the [Publish workflow](.github/workflows/publish.yml) manually from the GitHub Actions UI (`Run workflow`)
+1. Bump `version` in `build.gradle.kts` and update the changelog.
+2. Open a PR and merge to `main`.
+3. The [Publish workflow](.github/workflows/publish.yml) runs automatically on merge — it detects the new version, runs lint and tests, publishes to GitHub Packages, and creates a `v<version>` tag.
+
+Merges to `main` without a version bump (e.g. docs changes) are skipped silently — the workflow checks whether the version tag already exists before doing anything.
 
 ### Local development
 

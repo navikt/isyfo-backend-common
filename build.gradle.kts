@@ -77,6 +77,14 @@ tasks {
     }
 }
 
+tasks.withType<PublishToMavenRepository> {
+    doFirst {
+        if (System.getenv("GITHUB_ACTIONS") != "true") {
+            throw GradleException("Publishing must only be done from GitHub Actions CI. To release, push a version tag: git tag v<version> && git push origin v<version>")
+        }
+    }
+}
+
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {

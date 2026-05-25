@@ -1,20 +1,56 @@
+# Publishes a new version of the library to GitHub Packages.
+#
+# Triggered automatically on push to main. If the version in build.gradle.kts
+# has not been published before (no matching tag exists), runs lint, tests, publishes,
+# and creates a v<version> tag. Merges without a version bump are skipped silently.
+#
+# Can also be triggered manually via workflow_dispatch, but only from main.
 name: Publish
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
+  check-version:
+    name: Check if version is new
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      new: ${{ steps.version.outputs.new }}
+    steps:
+      - name: Verify running on main
+        if: github.ref != 'refs/heads/main'
+        run: |
+          echo "This workflow must be run from main, got: ${{ github.ref }}"
+          exit 1
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Extract version and check tag
+        id: version
+        run: |
+          VERSION=$(grep '^version = ' build.gradle.kts | sed 's/version = "\(.*\)"/\1/')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          if git ls-remote --tags origin "refs/tags/v$VERSION" | grep -q "v$VERSION"; then
+            echo "new=false" >> $GITHUB_OUTPUT
+            echo "Version $VERSION already published, skipping."
+          else
+            echo "new=true" >> $GITHUB_OUTPUT
+            echo "Version $VERSION is new, will publish."
+          fi
+
   publish:
-    if: github.ref == 'refs/heads/main'
     name: Build, test and publish to GitHub Packages
     runs-on: ubuntu-latest
+    needs: check-version
+    if: needs.check-version.outputs.new == 'true'
     permissions:
-      contents: read
+      contents: write
       packages: write
     steps:
       - uses: actions/checkout@v6
-        with:
-          ref: main
       - uses: actions/setup-java@v5
         with:
           distribution: zulu
@@ -29,3 +65,7 @@ jobs:
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create tag
+        run: |
+          git tag "v${{ needs.check-version.outputs.version }}"
+          git push origin "v${{ needs.check-version.outputs.version }}"
