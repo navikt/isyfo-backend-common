@@ -7,7 +7,7 @@ import no.nav.syfo.common.util.NAV_CALL_ID_HEADER
 import no.nav.syfo.common.util.NAV_PERSONIDENT_HEADER
 
 internal const val JWT_CLAIM_AZP = "azp"
-internal const val JWT_CLAIM_NAVIDENT = "NAVident"
+public const val JWT_CLAIM_NAVIDENT: String = "NAVident"
 
 /** Returns the value of the `Nav-Call-Id` request header, used for distributed tracing. */
 public fun ApplicationCall.getCallId(): String = this.request.headers[NAV_CALL_ID_HEADER].toString()
