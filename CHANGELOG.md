@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.0.20]
+
+### Changed
+- `OboTokenProvider`: renamed parameter `scopeClientId` → `targetClientId` for consistency.
+- `EntraIdClient.getOnBehalfOfToken`: now accepts `targetClientId` in `<cluster>.<namespace>.<app>` format (same as `AzureAdClient`) and constructs the full `api://$targetClientId/.default` scope internally.
+- `AzureAdClient.getOnBehalfOfToken`: aligned parameter name to `targetClientId`.
+
 ## [0.0.19]
 
 ### Added
