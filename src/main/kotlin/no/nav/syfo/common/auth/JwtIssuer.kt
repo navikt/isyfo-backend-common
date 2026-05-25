@@ -7,13 +7,13 @@ package no.nav.syfo.common.auth
  * @param jwtIssuerType A named identifier for this issuer, used as the Ktor authentication provider name.
  * @param wellKnown The OpenID Connect discovery document for this issuer.
  */
-data class JwtIssuer(
+public data class JwtIssuer(
     val acceptedAudienceList: List<String>,
     val jwtIssuerType: JwtIssuerType,
     val wellKnown: WellKnown
 )
 
 /** Named identifiers for supported JWT issuers. Used as Ktor authentication provider names. */
-enum class JwtIssuerType {
+public enum class JwtIssuerType {
     INTERNAL_AZUREAD
 }

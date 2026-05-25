@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory
  * @param config Base URL and Nais scope identifier for istilgangskontroll.
  * @param httpClient HTTP client to use. Defaults to [defaultHttpClient]. Override in tests with a mock engine.
  */
-class TilgangskontrollClient(
+public class TilgangskontrollClient(
     private val oboTokenProvider: OboTokenProvider,
     private val config: TilgangskontrollClientConfig,
     private val httpClient: HttpClient = defaultHttpClient()
@@ -84,7 +84,7 @@ class TilgangskontrollClient(
      * @param personIdent The person's national identity number (fødselsnummer).
      * @param token The veileder's incoming Bearer token (without the "Bearer " prefix).
      */
-    suspend fun hasAccess(callId: String, personIdent: String, token: String): Boolean {
+    public suspend fun hasAccess(callId: String, personIdent: String, token: String): Boolean {
         return getTilgang(callId, personIdent, token)?.erGodkjent ?: false
     }
 
@@ -96,7 +96,7 @@ class TilgangskontrollClient(
      * @param personIdent The person's national identity number (fødselsnummer).
      * @param token The veileder's incoming Bearer token (without the "Bearer " prefix).
      */
-    suspend fun hasWriteAccess(callId: String, personIdent: String, token: String): Boolean {
+    public suspend fun hasWriteAccess(callId: String, personIdent: String, token: String): Boolean {
         return getTilgang(callId, personIdent, token)?.let {
             it.erGodkjent && it.fullTilgang
         } ?: false
@@ -110,7 +110,7 @@ class TilgangskontrollClient(
      * @param token The veileder's incoming Bearer token (without the "Bearer " prefix).
      * @param callId Forwarded to istilgangskontroll as the `Nav-Call-Id` request header for tracing across services.
      */
-    suspend fun personsVeilederHasAccessTo(
+    public suspend fun personsVeilederHasAccessTo(
         personIdenter: List<String>,
         token: String,
         callId: String
@@ -143,7 +143,7 @@ class TilgangskontrollClient(
         }
     }
 
-    companion object {
+    private companion object {
         private val log = LoggerFactory.getLogger(TilgangskontrollClient::class.java)
 
         private const val TILGANGSKONTROLL_PERSON_PATH = "/api/tilgang/navident/person"

@@ -9,7 +9,7 @@ import no.nav.syfo.common.http.proxyHttpClient
  * Fetches and parses the OpenID Connect discovery document from [wellKnownUrl].
  * Uses a proxy-aware HTTP client. Intended to be called once at application startup.
  */
-fun getWellKnown(wellKnownUrl: String): WellKnown =
+public fun getWellKnown(wellKnownUrl: String): WellKnown =
     runBlocking {
         proxyHttpClient().use { client ->
             client.get(wellKnownUrl).body<WellKnownDTO>().toWellKnown()

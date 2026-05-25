@@ -15,7 +15,7 @@ private val log = LoggerFactory.getLogger("no.nav.syfo.common.auth")
  * Installs Ktor's JWT [Authentication] plugin, configuring one provider per entry in [jwtIssuerList].
  * Each provider is named after its [JwtIssuerType] and validates audience against [JwtIssuer.acceptedAudienceList].
  */
-fun Application.installJwtAuthentication(jwtIssuerList: List<JwtIssuer>) {
+public fun Application.installJwtAuthentication(jwtIssuerList: List<JwtIssuer>) {
     install(Authentication) {
         jwtIssuerList.forEach { jwtIssuer ->
             configureJwt(jwtIssuer)

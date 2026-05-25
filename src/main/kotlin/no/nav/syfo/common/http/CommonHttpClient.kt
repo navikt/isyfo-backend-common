@@ -23,7 +23,7 @@ import java.net.ProxySelector
  *
  * Use this as a base when configuring a custom [HttpClient] with a mock engine in tests.
  */
-val commonConfig: HttpClientConfig<out HttpClientEngineConfig>.() -> Unit = {
+public val commonConfig: HttpClientConfig<out HttpClientEngineConfig>.() -> Unit = {
     install(ContentNegotiation) {
         jackson { applyCommonJacksonConfig() }
     }
@@ -54,13 +54,13 @@ internal val proxyConfig: HttpClientConfig<Apache5EngineConfig>.() -> Unit = {
  * Use this for calls to other services within the same cluster, such as PDL, dokarkiv, or istilgangskontroll.
  * Applies [commonConfig].
  */
-fun defaultHttpClient() = HttpClient(Apache5, commonConfig)
+public fun defaultHttpClient(): HttpClient = HttpClient(Apache5, commonConfig)
 
 /**
  * Creates an [HttpClient] for internet-bound calls, routed through the Nav outbound proxy.
  *
  * Use this for calls that need to reach external endpoints, such as the Azure AD token endpoint
  * or the OpenID Connect well-known configuration URL.
- * Applies [commonConfig] plus proxy routing via [java.net.ProxySelector].
+ * Applies [commonConfig] plus proxy routing via [ProxySelector].
  */
-fun proxyHttpClient() = HttpClient(Apache5, proxyConfig)
+public fun proxyHttpClient(): HttpClient = HttpClient(Apache5, proxyConfig)

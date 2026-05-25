@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory
  * @param tokenEndpoint M2M (client credentials) token endpoint URL. Defaults to `NAIS_TOKEN_ENDPOINT` env var.
  * @param httpClient HTTP client to use. Defaults to [defaultHttpClient].
  */
-class EntraIdClient(
+public class EntraIdClient(
     private val tokenExchangeEndpoint: String = System.getenv("NAIS_TOKEN_EXCHANGE_ENDPOINT"),
     private val tokenEndpoint: String = System.getenv("NAIS_TOKEN_ENDPOINT"),
     private val httpClient: HttpClient = defaultHttpClient()
@@ -71,7 +71,7 @@ class EntraIdClient(
      * @param scopeClientId The Nais scope identifier for the target API, e.g. `api://<cluster>.<namespace>.<app>/.default`.
      * @return The access token string, or null on error.
      */
-    suspend fun getSystemToken(scopeClientId: String): String? =
+    public suspend fun getSystemToken(scopeClientId: String): String? =
         try {
             val response = httpClient.post(tokenEndpoint) {
                 accept(ContentType.Application.Json)
@@ -98,7 +98,7 @@ class EntraIdClient(
             null
         }
 
-    companion object {
+    private companion object {
         private const val IDENTITY_PROVIDER = "entra_id"
         private val log = LoggerFactory.getLogger(EntraIdClient::class.java)
     }

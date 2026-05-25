@@ -18,7 +18,7 @@ import no.nav.syfo.common.util.ktor.getPersonIdent
  * @param requiresWriteAccess If true, checks for fullTilgang (write access) rather than read access.
  * @param block The handler to execute if access is granted.
  */
-suspend fun RoutingContext.checkVeilederTilgang(
+public suspend fun RoutingContext.checkVeilederTilgang(
     action: String,
     tilgangskontrollClient: TilgangskontrollClient,
     requiresWriteAccess: Boolean = false,
@@ -48,7 +48,7 @@ suspend fun RoutingContext.checkVeilederTilgang(
  * @param requiresWriteAccess If true, checks for fullTilgang (write access) rather than read access.
  * @param block The handler to execute if access is granted.
  */
-suspend fun RoutingContext.checkVeilederTilgang(
+public suspend fun RoutingContext.checkVeilederTilgang(
     action: String,
     personIdent: String,
     tilgangskontrollClient: TilgangskontrollClient,

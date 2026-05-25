@@ -12,7 +12,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
  * Equivalent to `jacksonObjectMapper().applyCommonJacksonConfig()`.
  * Use this when you need a standalone mapper, e.g. for serializing/deserializing in non-Ktor contexts.
  */
-fun configuredJacksonMapper() = jacksonObjectMapper().applyCommonJacksonConfig()
+public fun configuredJacksonMapper(): ObjectMapper = jacksonObjectMapper().applyCommonJacksonConfig()
 
 /**
  * Applies common isyfo Jackson configuration to this [ObjectMapper]:
@@ -20,7 +20,7 @@ fun configuredJacksonMapper() = jacksonObjectMapper().applyCommonJacksonConfig()
  * - Ignores unknown JSON properties on deserialization
  * - Serializes dates as ISO-8601 strings rather than timestamps
  */
-fun ObjectMapper.applyCommonJacksonConfig() = this.apply {
+public fun ObjectMapper.applyCommonJacksonConfig(): ObjectMapper = this.apply {
     registerModule(JavaTimeModule())
     configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
