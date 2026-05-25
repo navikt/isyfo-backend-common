@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.0.22]
+
+### Changed
+- Publish workflow: triggers automatically on push to main, skips if version already tagged, creates git tag after successful publish. Manual dispatch restricted to main branch.
+- `build.gradle.kts`: publish task blocked when not running in GitHub Actions CI.
+
 ## [0.0.21]
 
 ### Added
