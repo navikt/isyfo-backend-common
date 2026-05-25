@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.0.21]
+
+### Added
+- `SystemTokenProvider` interface (`no.nav.syfo.common.token`) for typed system/M2M token dependencies.
+- `no.nav.syfo.common.token.texas` package with `EntraIdClient` — replaces the previous `entraid.EntraIdClient`. Uses the same Texas sidecar, but endpoint URLs are now always read from env vars (`NAIS_TOKEN_EXCHANGE_ENDPOINT`, `NAIS_TOKEN_ENDPOINT`) and are not overridable by consumers.
+- `TexasIdentityProvider` enum with a note on how to extend with TokenX and Maskinporten in the future.
+
+### Changed
+- `AzureAdClient` now implements both `OboTokenProvider` and `SystemTokenProvider`. `getSystemToken` return type changed from `AzureAdToken?` to `String?` (the access token string directly).
+- `EntraIdClient` moved from `no.nav.syfo.common.token.entraid` to `no.nav.syfo.common.token.texas`.
+
+### Removed
+- `no.nav.syfo.common.token.entraid` package (`EntraIdClient` and `EntraIdTokenModels`).
+
 ## [0.0.20]
 
 ### Changed

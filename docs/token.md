@@ -1,10 +1,14 @@
 # Token providers
 
-Both clients implement `OboTokenProvider` and are interchangeable as a dependency for `TilgangskontrollClient`.
+Both clients implement `OboTokenProvider` and `SystemTokenProvider`.
+
+Token methods accept `targetClientId` in `<cluster>.<namespace>.<app>` format — the `api://` prefix and `/.default` suffix are added internally by each client.
 
 ---
 
 ## EntraIdClient (Texas)
+
+`no.nav.syfo.common.token.texas.EntraIdClient`
 
 Uses the Nais token exchange sidecar (Texas) — no client credentials needed in the app. Texas handles caching, renewal, and communication with Entra ID.
 
@@ -19,8 +23,8 @@ val entraIdClient = EntraIdClient()
 
 ```kotlin
 val token = entraIdClient.getOnBehalfOfToken(
-    scopeClientId = "api://<cluster>.<namespace>.<app>/.default",
-    token = incomingToken,
+    targetClientId = "<cluster>.<namespace>.<app>", // e.g. "dev-fss.teamsykefravr.istilgangskontroll"
+    token = incomingToken
 )
 ```
 
@@ -28,7 +32,7 @@ val token = entraIdClient.getOnBehalfOfToken(
 
 ```kotlin
 val token = entraIdClient.getSystemToken(
-    scopeClientId = "api://<cluster>.<namespace>.<app>/.default",
+    targetClientId = "<cluster>.<namespace>.<app>"
 )
 ```
 
@@ -42,6 +46,8 @@ Switching to `EntraIdClient` lets you simplify consuming apps:
 ---
 
 ## AzureAdClient
+
+`no.nav.syfo.common.token.azuread.AzureAdClient`
 
 For apps not yet using the Nais token sidecar (Texas). Communicates directly with Azure AD. System tokens are cached in-memory per scope (refreshed 60 seconds before expiry). OBO tokens are not cached.
 
@@ -58,17 +64,20 @@ val azureEnvironment = AzureEnvironment(
 val azureAdClient = AzureAdClient(azureEnvironment = azureEnvironment)
 ```
 
-### System tokens
-
-```kotlin
-val token = azureAdClient.getSystemToken(scopeClientId = "api://my-service/.default")
-```
-
 ### On-behalf-of tokens
 
 ```kotlin
 val token = azureAdClient.getOnBehalfOfToken(
-    scopeClientId = "api://my-service/.default",
+    targetClientId = "<cluster>.<namespace>.<app>", // e.g. "dev-fss.teamsykefravr.istilgangskontroll"
     token = incomingToken,
 )
 ```
+
+### System tokens
+
+```kotlin
+val token = azureAdClient.getSystemToken(
+    targetClientId = "<cluster>.<namespace>.<app>"
+)
+```
+

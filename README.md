@@ -7,9 +7,9 @@ Some helpers are for Ktor apps, while non-Ktor apps can use parts of the library
 ## What it provides
 
 ### Token providers
-- `EntraIdClient` — acquires OBO and system tokens via the Nais token exchange sidecar (Texas) (recommended)
-- `AzureAdClient` — acquires OBO and system tokens directly from Azure AD (for apps not yet on the Nais token sidecar (Texas))
-- Both implement `OboTokenProvider`, making them interchangeable as a dependency for `TilgangskontrollClient`
+- `EntraIdClient` — acquires OBO and system tokens via the Nais token exchange sidecar (Texas)
+- `AzureAdClient` — acquires OBO and system tokens directly from Azure AD
+- Both implement `OboTokenProvider` and `SystemTokenProvider`
 
 ### Veileder access control
 - `TilgangskontrollClient` — read/write access checks against `istilgangskontroll`

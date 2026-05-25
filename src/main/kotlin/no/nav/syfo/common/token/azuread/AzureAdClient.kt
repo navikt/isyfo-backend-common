@@ -13,13 +13,14 @@ import io.ktor.http.ContentType
 import io.ktor.http.Parameters
 import no.nav.syfo.common.http.proxyHttpClient
 import no.nav.syfo.common.token.OboTokenProvider
+import no.nav.syfo.common.token.SystemTokenProvider
 import org.slf4j.LoggerFactory
 import java.util.concurrent.ConcurrentHashMap
 
 public class AzureAdClient(
     private val azureEnvironment: AzureEnvironment,
     private val httpClient: HttpClient = proxyHttpClient()
-) : OboTokenProvider {
+) : OboTokenProvider, SystemTokenProvider {
     override suspend fun getOnBehalfOfToken(targetClientId: String, token: String): String? = getAccessToken(
         Parameters.build {
             append("client_id", azureEnvironment.appClientId)
@@ -32,28 +33,30 @@ public class AzureAdClient(
         }
     )?.toAzureAdToken()?.accessToken
 
-    public suspend fun getSystemToken(targetClientId: String): AzureAdToken? {
+    public override suspend fun getSystemToken(targetClientId: String): String? {
         val cacheKey = "${CACHE_AZUREAD_TOKEN_SYSTEM_KEY_PREFIX}$targetClientId"
         val cachedToken = cache.get(key = cacheKey)
-        return if (cachedToken?.isExpired() == false) {
-            COUNT_CALL_AZUREAD_SYSTEM_TOKEN_CACHE_HIT.increment()
-            cachedToken
-        } else {
-            COUNT_CALL_AZUREAD_SYSTEM_TOKEN_CACHE_MISS.increment()
-            val azureAdTokenResponse = getAccessToken(
-                Parameters.build {
-                    append("client_id", azureEnvironment.appClientId)
-                    append("client_secret", azureEnvironment.appClientSecret)
-                    append("grant_type", "client_credentials")
-                    append("scope", "api://$targetClientId/.default")
-                }
-            )
-            azureAdTokenResponse?.let { token ->
-                token.toAzureAdToken().also {
-                    cache[cacheKey] = it
+        return (
+            if (cachedToken?.isExpired() == false) {
+                COUNT_CALL_AZUREAD_SYSTEM_TOKEN_CACHE_HIT.increment()
+                cachedToken
+            } else {
+                COUNT_CALL_AZUREAD_SYSTEM_TOKEN_CACHE_MISS.increment()
+                val azureAdTokenResponse = getAccessToken(
+                    Parameters.build {
+                        append("client_id", azureEnvironment.appClientId)
+                        append("client_secret", azureEnvironment.appClientSecret)
+                        append("grant_type", "client_credentials")
+                        append("scope", "api://$targetClientId/.default")
+                    }
+                )
+                azureAdTokenResponse?.let { token ->
+                    token.toAzureAdToken().also {
+                        cache[cacheKey] = it
+                    }
                 }
             }
-        }
+            )?.accessToken
     }
 
     private suspend fun getAccessToken(
