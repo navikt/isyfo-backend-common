@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.0.24]
+
+### Changed
+- `TilgangskontrollClient`: `TILGANGSKONTROLL_PERSON_PATH` and `TILGANGSKONTROLL_BRUKERE_PATH` are now public constants.
+
 ## [0.0.23]
 
 ### Changed

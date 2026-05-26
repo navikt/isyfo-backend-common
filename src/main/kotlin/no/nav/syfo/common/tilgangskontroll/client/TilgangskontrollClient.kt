@@ -143,10 +143,10 @@ public class TilgangskontrollClient(
         }
     }
 
-    private companion object {
+    public companion object {
         private val log = LoggerFactory.getLogger(TilgangskontrollClient::class.java)
 
-        private const val TILGANGSKONTROLL_PERSON_PATH = "/api/tilgang/navident/person"
-        private const val TILGANGSKONTROLL_BRUKERE_PATH = "/api/tilgang/navident/brukere"
+        public const val TILGANGSKONTROLL_PERSON_PATH: String = "/api/tilgang/navident/person"
+        public const val TILGANGSKONTROLL_BRUKERE_PATH: String = "/api/tilgang/navident/brukere"
     }
 }
