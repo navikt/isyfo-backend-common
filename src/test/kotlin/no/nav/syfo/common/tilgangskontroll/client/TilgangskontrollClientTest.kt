@@ -13,6 +13,7 @@ import no.nav.syfo.common.http.commonConfig
 import no.nav.syfo.common.testhelper.receiveBody
 import no.nav.syfo.common.testhelper.respond
 import no.nav.syfo.common.token.OboTokenProvider
+import no.nav.syfo.common.util.ClientConfig
 import no.nav.syfo.common.util.NAV_CALL_ID_HEADER
 import no.nav.syfo.common.util.NAV_PERSONIDENT_HEADER
 import no.nav.syfo.common.util.bearerHeader
@@ -24,15 +25,16 @@ import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+
 /**
- * Unit test for TilgangskontrollClient. azureAdClient and httpClient dependencies are mocked.
+ * Unit test for TilgangskontrollClient. oboTokenProvider and httpClient dependencies are mocked.
  */
 class TilgangskontrollClientTest {
     private val token = "token"
     private val oboToken = "obo-token"
     private val callId = "call-id"
     private val personIdent = "12345678910"
-    private val config = TilgangskontrollClientConfig(
+    private val clientConfig = ClientConfig(
         baseUrl = "isTilgangskontrollUrl",
         clientId = "dev-fss.teamsykefravr.istilgangskontroll"
     )
@@ -72,7 +74,7 @@ class TilgangskontrollClientTest {
 
         val client = TilgangskontrollClient(
             oboTokenProvider = oboTokenProvider,
-            config = config,
+            clientConfig = clientConfig,
             httpClient = httpClient
         )
 
@@ -166,7 +168,7 @@ class TilgangskontrollClientTest {
 
         val client = TilgangskontrollClient(
             oboTokenProvider = oboTokenProvider,
-            config = config,
+            clientConfig = clientConfig,
             httpClient = httpClient
         )
 
@@ -218,7 +220,7 @@ class TilgangskontrollClientTest {
 
         return TilgangskontrollClient(
             oboTokenProvider = oboTokenProvider,
-            config = config,
+            clientConfig = clientConfig,
             httpClient = httpClient
         )
     }

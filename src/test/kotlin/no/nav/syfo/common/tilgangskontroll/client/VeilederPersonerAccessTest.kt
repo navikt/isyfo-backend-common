@@ -11,6 +11,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.syfo.common.http.commonConfig
 import no.nav.syfo.common.testhelper.respond
 import no.nav.syfo.common.token.OboTokenProvider
+import no.nav.syfo.common.util.ClientConfig
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
@@ -27,7 +28,7 @@ class VeilederPersonerAccessTest {
     private val oboToken = "obo-token"
     private val callId = "call-id"
     private val personIdenter = listOf("12345678910", "10987654321", "11223344556")
-    private val config = TilgangskontrollClientConfig(
+    private val config = ClientConfig(
         baseUrl = "isTilgangskontrollUrl",
         clientId = "dev-fss.teamsykefravr.istilgangskontroll"
     )
@@ -211,7 +212,7 @@ class VeilederPersonerAccessTest {
 
         return TilgangskontrollClient(
             oboTokenProvider = oboTokenProvider,
-            config = config,
+            clientConfig = config,
             httpClient = httpClient
         )
     }

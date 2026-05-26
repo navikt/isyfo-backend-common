@@ -16,6 +16,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import no.nav.syfo.common.http.defaultHttpClient
 import no.nav.syfo.common.token.OboTokenProvider
+import no.nav.syfo.common.util.ClientConfig
 import no.nav.syfo.common.util.NAV_CALL_ID_HEADER
 import no.nav.syfo.common.util.NAV_PERSONIDENT_HEADER
 import no.nav.syfo.common.util.bearerHeader
@@ -29,20 +30,20 @@ import org.slf4j.LoggerFactory
  *
  * @param oboTokenProvider Supplies OBO tokens for the veileder's token. Pass an [no.nav.syfo.common.token.azuread.AzureAdClient]
  * directly, or wrap a custom token source in a lambda: `{ scopeClientId, token -> ... }`.
- * @param config Base URL and Nais scope identifier for istilgangskontroll.
+ * @param clientConfig [ClientConfig] for istilgangskontroll.
  * @param httpClient HTTP client to use. Defaults to [defaultHttpClient]. Override in tests with a mock engine.
  */
 public class TilgangskontrollClient(
     private val oboTokenProvider: OboTokenProvider,
-    private val config: TilgangskontrollClientConfig,
+    private val clientConfig: ClientConfig,
     private val httpClient: HttpClient = defaultHttpClient()
 ) {
-    private val tilgangskontrollPersonUrl = "${config.baseUrl}$TILGANGSKONTROLL_PERSON_PATH"
-    private val tilgangskontrollBrukereUrl = "${config.baseUrl}$TILGANGSKONTROLL_BRUKERE_PATH"
+    private val tilgangskontrollPersonUrl = "${clientConfig.baseUrl}$TILGANGSKONTROLL_PERSON_PATH"
+    private val tilgangskontrollBrukereUrl = "${clientConfig.baseUrl}$TILGANGSKONTROLL_BRUKERE_PATH"
 
     private suspend fun getTilgang(callId: String, personIdent: String, token: String): Tilgang? {
         val onBehalfOfToken = oboTokenProvider.getOnBehalfOfToken(
-            targetClientId = config.clientId,
+            targetClientId = clientConfig.clientId,
             token = token
         ) ?: throw RuntimeException("Failed to request access to Person: Failed to get OBO token")
 
@@ -116,7 +117,7 @@ public class TilgangskontrollClient(
         callId: String
     ): List<String>? {
         val oboToken = oboTokenProvider.getOnBehalfOfToken(
-            targetClientId = config.clientId,
+            targetClientId = clientConfig.clientId,
             token = token
         ) ?: throw RuntimeException("Failed to request access to list of persons: Failed to get OBO token")
 

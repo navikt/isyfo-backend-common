@@ -13,7 +13,7 @@ Client for checking veileder access via `istilgangskontroll`.
 ```kotlin
 val tilgangskontrollClient = TilgangskontrollClient(
     oboTokenProvider = EntraIdClient(), // or AzureAdClient(...)
-    config = TilgangskontrollClientConfig(
+    clientConfig = ClientConfig(
         baseUrl = "https://istilgangskontroll",
         clientId = "dev-fss.teamsykefravr.istilgangskontroll",
     ),

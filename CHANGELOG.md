@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.0.26]
+
+### Added
+- `ClientConfig` data class in `no.nav.syfo.common.util` — holds `baseUrl` and `clientId` for configuring downstream service clients.
+
 ## [0.0.25]
 
 ### Changed
