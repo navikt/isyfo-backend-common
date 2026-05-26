@@ -23,24 +23,27 @@ import java.util.concurrent.ConcurrentHashMap
  * Supports both exchanging employee tokens for OBO-tokens ([OboTokenProvider]) for consuming an API on behalf of an
  * employee, and obtaining system tokens ([SystemTokenProvider]) for consuming an API as the application itself.
  *
- * @param azureEnvironment Azure AD app registration config (client ID, secret, token endpoint).
+ * Reads configuration from [AzureAdClientConfig], which defaults to reading NAIS-injected
+ * environment variables via [AzureAdClientConfig.fromEnv].
+ *
+ * @param config Azure AD configuration. Defaults to [AzureAdClientConfig.fromEnv].
  * @param httpClient Optional HTTP client override; defaults to a proxy-aware client.
  */
 public class AzureAdClient(
-    private val azureEnvironment: AzureEnvironment,
+    private val config: AzureAdClientConfig = AzureAdClientConfig.fromEnv(),
     private val httpClient: HttpClient = proxyHttpClient()
 ) : OboTokenProvider, SystemTokenProvider {
     /**
      * Exchanges the caller's token for an on-behalf-of token scoped to [targetClientId].
      *
-     * @param targetClientId The target app registration in `cluster.namespace.app` format.
+     * @param targetClientId The client ID of the downstream service to request a token for, in `cluster.namespace.app` format.
      * @param token The caller's bearer token to exchange.
      * @return The raw access token string, or `null` if the exchange failed.
      */
     override suspend fun getOnBehalfOfToken(targetClientId: String, token: String): String? = getAccessToken(
         Parameters.build {
-            append("client_id", azureEnvironment.appClientId)
-            append("client_secret", azureEnvironment.appClientSecret)
+            append("client_id", config.appClientId)
+            append("client_secret", config.appClientSecret)
             append("client_assertion_type", "urn:ietf:params:oauth:grant-type:jwt-bearer")
             append("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer")
             append("assertion", token)
@@ -54,7 +57,7 @@ public class AzureAdClient(
      *
      * Tokens are cached in memory and reused until expiry to avoid unnecessary requests.
      *
-     * @param targetClientId The target app registration in `cluster.namespace.app` format.
+     * @param targetClientId The client ID of the downstream service to request a token for, in `cluster.namespace.app` format.
      * @return The raw access token string, or `null` if acquisition failed.
      */
     public override suspend fun getSystemToken(targetClientId: String): String? {
@@ -68,8 +71,8 @@ public class AzureAdClient(
                 COUNT_CALL_AZUREAD_SYSTEM_TOKEN_CACHE_MISS.increment()
                 val azureAdTokenResponse = getAccessToken(
                     Parameters.build {
-                        append("client_id", azureEnvironment.appClientId)
-                        append("client_secret", azureEnvironment.appClientSecret)
+                        append("client_id", config.appClientId)
+                        append("client_secret", config.appClientSecret)
                         append("grant_type", "client_credentials")
                         append("scope", "api://$targetClientId/.default")
                     }
@@ -87,7 +90,7 @@ public class AzureAdClient(
         formParameters: Parameters
     ): AzureAdTokenResponse? =
         try {
-            val response: HttpResponse = httpClient.post(azureEnvironment.openidConfigTokenEndpoint) {
+            val response: HttpResponse = httpClient.post(config.openidConfigTokenEndpoint) {
                 accept(ContentType.Application.Json)
                 setBody(FormDataContent(formParameters))
             }

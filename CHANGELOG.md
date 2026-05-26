@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.0.25]
+
+### Changed
+- `AzureAdClient`: no longer requires `AzureEnvironment` to be passed in — reads NAIS environment variables automatically via `AzureAdClientConfig.fromEnv()`. Constructor argument is optional and can still be overridden (e.g. in tests).
+- `AzureEnvironment` renamed to `AzureAdClientConfig`.
+
 ## [0.0.24]
 
 ### Changed
