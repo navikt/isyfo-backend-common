@@ -6,10 +6,11 @@ import no.nav.syfo.common.token.OboTokenProvider
 import no.nav.syfo.common.token.SystemTokenProvider
 
 /**
- * Token client for Entra ID (formerly Azure AD) via the Nais token exchange sidecar (Texas).
+ * Client for obtaining tokens from the Entra ID identity provider (formerly Azure AD)
+ * via the Nais token exchange sidecar (Texas).
  *
- * Supports both OBO tokens ([OboTokenProvider]) for acting on behalf of employees,
- * and system tokens ([SystemTokenProvider]) for machine-to-machine calls.
+ * Supports both exchanging employee tokens for OBO-tokens ([OboTokenProvider]) for consuming an API on behalf of an
+ * employee, and obtaining system tokens ([SystemTokenProvider]) for consuming an API as the application itself.
  *
  * Reads `NAIS_TOKEN_EXCHANGE_ENDPOINT` and `NAIS_TOKEN_ENDPOINT` from the environment automatically.
  *

@@ -17,10 +17,26 @@ import no.nav.syfo.common.token.SystemTokenProvider
 import org.slf4j.LoggerFactory
 import java.util.concurrent.ConcurrentHashMap
 
+/**
+ * Client for obtaining tokens from Entra ID (formerly Azure AD) identity provider directly (not using Texas).
+ *
+ * Supports both exchanging employee tokens for OBO-tokens ([OboTokenProvider]) for consuming an API on behalf of an
+ * employee, and obtaining system tokens ([SystemTokenProvider]) for consuming an API as the application itself.
+ *
+ * @param azureEnvironment Azure AD app registration config (client ID, secret, token endpoint).
+ * @param httpClient Optional HTTP client override; defaults to a proxy-aware client.
+ */
 public class AzureAdClient(
     private val azureEnvironment: AzureEnvironment,
     private val httpClient: HttpClient = proxyHttpClient()
 ) : OboTokenProvider, SystemTokenProvider {
+    /**
+     * Exchanges the caller's token for an on-behalf-of token scoped to [targetClientId].
+     *
+     * @param targetClientId The target app registration in `cluster.namespace.app` format.
+     * @param token The caller's bearer token to exchange.
+     * @return The raw access token string, or `null` if the exchange failed.
+     */
     override suspend fun getOnBehalfOfToken(targetClientId: String, token: String): String? = getAccessToken(
         Parameters.build {
             append("client_id", azureEnvironment.appClientId)
@@ -33,6 +49,14 @@ public class AzureAdClient(
         }
     )?.toAzureAdToken()?.accessToken
 
+    /**
+     * Acquires a machine-to-machine token scoped to [targetClientId] using client credentials.
+     *
+     * Tokens are cached in memory and reused until expiry to avoid unnecessary requests.
+     *
+     * @param targetClientId The target app registration in `cluster.namespace.app` format.
+     * @return The raw access token string, or `null` if acquisition failed.
+     */
     public override suspend fun getSystemToken(targetClientId: String): String? {
         val cacheKey = "${CACHE_AZUREAD_TOKEN_SYSTEM_KEY_PREFIX}$targetClientId"
         val cachedToken = cache.get(key = cacheKey)
