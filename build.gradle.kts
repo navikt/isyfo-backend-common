@@ -43,7 +43,7 @@ dependencies {
     // Serialization
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonDataTypeVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonDataTypeVersion")
-    implementation("tools.jackson.core:jackson-databind:${jacksonDatabindVersion}")
+    implementation("tools.jackson.core:jackson-databind:$jacksonDatabindVersion")
 
     // Tests
     testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
