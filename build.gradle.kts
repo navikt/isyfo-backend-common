@@ -5,6 +5,7 @@ version = "0.0.26"
 description = "Shared Kotlin library for checking veileder access via istilgangskontroll"
 
 val jacksonDataTypeVersion = "2.21.3"
+val jacksonDatabindVersion = "3.1.3"
 val ktorVersion = "3.5.0"
 val logbackVersion = "1.5.32"
 val micrometerVersion = "1.16.5"
@@ -42,6 +43,7 @@ dependencies {
     // Serialization
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonDataTypeVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonDataTypeVersion")
+    implementation("tools.jackson.core:jackson-databind:${jacksonDatabindVersion}")
 
     // Tests
     testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
