@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.0.28]
+
+### Changed
+- Jackson dependencies (`jackson-module-kotlin`, `jackson-datatype-jsr310`) promoted from `implementation` to `api` — consumers no longer need to declare Jackson themselves to use `configuredJacksonMapper()` or `applyCommonJacksonConfig()`.
+
 ## [0.0.27]
 
 ### Changed

@@ -1,7 +1,7 @@
 import com.adarshr.gradle.testlogger.theme.ThemeType
 
 group = "no.nav.syfo"
-version = "0.0.27"
+version = "0.0.28"
 description = "Shared Kotlin library for checking veileder access via istilgangskontroll"
 
 val jacksonDataTypeVersion = "2.21.2"
@@ -25,23 +25,21 @@ repositories {
 }
 
 dependencies {
-    // Public API types
+    // Exposed in public API — consumers need these on their compile classpath
     api("io.ktor:ktor-client-core:$ktorVersion")
     api("io.ktor:ktor-server-auth-jwt:$ktorVersion")
     api("io.micrometer:micrometer-core:$micrometerVersion")
+    api("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonDataTypeVersion")
+    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonDataTypeVersion")
 
-    // Ktor client – used by AzureAdClient and VeilederTilgangskontrollClient
+    // Internal — encapsulated behind library functions, not referenced directly by consumers
     implementation("io.ktor:ktor-client-apache5:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
 
-    // Logging facade only; consuming apps own the runtime binding
+    // Logging facade only; consuming apps own the runtime binding (e.g. logback-classic)
     implementation("org.slf4j:slf4j-api:$slf4jVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
-
-    // Serialization
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonDataTypeVersion")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonDataTypeVersion")
 
     // Tests
     testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
