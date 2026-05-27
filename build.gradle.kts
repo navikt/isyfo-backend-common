@@ -4,16 +4,16 @@ group = "no.nav.syfo"
 version = "0.0.26"
 description = "Shared Kotlin library for checking veileder access via istilgangskontroll"
 
-val jacksonDataTypeVersion = "2.21.2"
-val ktorVersion = "3.4.2"
+val jacksonDataTypeVersion = "2.21.3"
+val ktorVersion = "3.5.0"
 val logbackVersion = "1.5.32"
-val micrometerVersion = "1.16.4"
+val micrometerVersion = "1.16.5"
 val logstashVersion = "9.0"
 val mockkVersion = "1.14.9"
 val slf4jVersion = "2.0.17"
 
 plugins {
-    kotlin("jvm") version "2.3.10"
+    kotlin("jvm") version "2.3.21"
     `java-library`
     `maven-publish`
     id("org.jlleitschuh.gradle.ktlint") version "11.6.1"
