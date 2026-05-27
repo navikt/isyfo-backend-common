@@ -42,14 +42,14 @@ public class TilgangskontrollClient(
     private val tilgangskontrollBrukereUrl = "${clientConfig.baseUrl}$TILGANGSKONTROLL_BRUKERE_PATH"
 
     private suspend fun getTilgang(callId: String, personIdent: String, token: String): Tilgang? {
-        val onBehalfOfToken = oboTokenProvider.getOnBehalfOfToken(
+        val oboToken = oboTokenProvider.getOnBehalfOfToken(
             targetClientId = clientConfig.clientId,
             token = token
         ) ?: throw RuntimeException("Failed to request access to Person: Failed to get OBO token")
 
         return try {
             val tilgangResponse = httpClient.get(tilgangskontrollPersonUrl) {
-                header(HttpHeaders.Authorization, bearerHeader(onBehalfOfToken))
+                header(HttpHeaders.Authorization, bearerHeader(oboToken))
                 header(NAV_PERSONIDENT_HEADER, personIdent)
                 header(NAV_CALL_ID_HEADER, callId)
                 accept(ContentType.Application.Json)
