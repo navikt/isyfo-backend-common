@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.0.31]
+
+### Added
+- Metric names are now prefixed with the consuming app's name, read from the `NAIS_APP_NAME` environment variable (injected by NAIS from `metadata.name` in `app.yaml`). Dashes in the app name are replaced with underscores to comply with Prometheus naming rules. Falls back to `unknown` if the variable is not set.
+
 ## [0.0.30]
 
 ### Changed
