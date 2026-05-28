@@ -1,6 +1,7 @@
 package no.nav.syfo.common.tilgangskontroll.ktor
 
 import io.ktor.server.routing.RoutingContext
+import no.nav.syfo.common.tilgangskontroll.VeilederTilgangForbiddenException
 import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
 import no.nav.syfo.common.util.NAV_PERSONIDENT_HEADER
 import no.nav.syfo.common.util.ktor.getBearerToken

@@ -1,4 +1,4 @@
-package no.nav.syfo.common.tilgangskontroll.ktor
+package no.nav.syfo.common.tilgangskontroll
 
 /**
  * Thrown when a veileder is denied access to a person by istilgangskontroll.
