@@ -43,7 +43,7 @@ class TilgangskontrollExtensionsTest {
         } returns true
 
         runBlocking {
-            routingContext.checkVeilederTilgang(
+            routingContext.checkVeilederTilgangToPerson(
                 action = action,
                 tilgangskontrollClient = tilgangskontrollClient
             ) {
@@ -76,7 +76,7 @@ class TilgangskontrollExtensionsTest {
         } returns true
 
         runBlocking {
-            routingContext.checkVeilederTilgang(
+            routingContext.checkVeilederTilgangToPerson(
                 action = action,
                 tilgangskontrollClient = tilgangskontrollClient,
                 requiresWriteAccess = true
@@ -111,7 +111,7 @@ class TilgangskontrollExtensionsTest {
 
         assertThrows(VeilederTilgangForbiddenException::class.java) {
             runBlocking {
-                routingContext.checkVeilederTilgang(
+                routingContext.checkVeilederTilgangToPerson(
                     action = action,
                     tilgangskontrollClient = tilgangskontrollClient
                 ) {
@@ -137,7 +137,7 @@ class TilgangskontrollExtensionsTest {
 
         assertThrows(IllegalArgumentException::class.java) {
             runBlocking {
-                routingContext.checkVeilederTilgang(
+                routingContext.checkVeilederTilgangToPerson(
                     action = action,
                     tilgangskontrollClient = tilgangskontrollClient
                 ) {}
@@ -163,7 +163,7 @@ class TilgangskontrollExtensionsTest {
 
         assertThrows(IllegalArgumentException::class.java) {
             runBlocking {
-                routingContext.checkVeilederTilgang(
+                routingContext.checkVeilederTilgangToPerson(
                     action = action,
                     tilgangskontrollClient = tilgangskontrollClient
                 ) {}
@@ -193,7 +193,7 @@ class TilgangskontrollExtensionsTest {
         } returns true
 
         runBlocking {
-            routingContext.checkVeilederTilgang(
+            routingContext.checkVeilederTilgangToPerson(
                 action = action,
                 personIdent = personIdent,
                 tilgangskontrollClient = tilgangskontrollClient
@@ -223,7 +223,7 @@ class TilgangskontrollExtensionsTest {
         } returns true
 
         runBlocking {
-            routingContext.checkVeilederTilgang(
+            routingContext.checkVeilederTilgangToPerson(
                 action = action,
                 personIdent = personIdent,
                 tilgangskontrollClient = tilgangskontrollClient,
@@ -255,7 +255,7 @@ class TilgangskontrollExtensionsTest {
 
         assertThrows(VeilederTilgangForbiddenException::class.java) {
             runBlocking {
-                routingContext.checkVeilederTilgang(
+                routingContext.checkVeilederTilgangToPerson(
                     action = action,
                     personIdent = personIdent,
                     tilgangskontrollClient = tilgangskontrollClient
@@ -278,7 +278,7 @@ class TilgangskontrollExtensionsTest {
 
         assertThrows(IllegalArgumentException::class.java) {
             runBlocking {
-                routingContext.checkVeilederTilgang(
+                routingContext.checkVeilederTilgangToPerson(
                     action = action,
                     personIdent = personIdent,
                     tilgangskontrollClient = tilgangskontrollClient

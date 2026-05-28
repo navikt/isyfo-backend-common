@@ -24,14 +24,14 @@ val tilgangskontrollClient = TilgangskontrollClient(
 
 ### Using the Ktor convenience helper
 
-`checkVeilederTilgang()` can wrap a route handler block — it extracts the token, calls the appropriate access check, and responds with `403 Forbidden` if access is denied.
+`checkVeilederTilgangToPerson()` can wrap a route handler block — it extracts the token, calls the appropriate access check, and responds with `403 Forbidden` if access is denied.
 
 Overload that reads personIdent from the `nav-personident` request header:
 
 ```kotlin
 route("/api") {
     get("/person") {
-        checkVeilederTilgang(
+        checkVeilederTilgangToPerson(
             action = "read person",
             veilederTilgangskontrollClient = tilgangskontrollClient,
         ) {
@@ -47,7 +47,7 @@ Overload that takes personIdent as a parameter explicitly (e.g. when read from t
 route("/api") {
     post("/person") {
         val requestDTO = call.receive<RequestDTO>()
-        checkVeilederTilgang(
+        checkVeilederTilgangToPerson(
             action = "write person",
             personIdent = requestDTO.personIdent,
             veilederTilgangskontrollClient = tilgangskontrollClient,

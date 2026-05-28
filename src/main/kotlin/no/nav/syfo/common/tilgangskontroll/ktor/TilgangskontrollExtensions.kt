@@ -18,7 +18,7 @@ import no.nav.syfo.common.util.ktor.getPersonIdent
  * @param requiresWriteAccess If true, checks for fullTilgang (write access) rather than read access.
  * @param block The handler to execute if access is granted.
  */
-public suspend fun RoutingContext.checkVeilederTilgang(
+public suspend fun RoutingContext.checkVeilederTilgangToPerson(
     action: String,
     tilgangskontrollClient: TilgangskontrollClient,
     requiresWriteAccess: Boolean = false,
@@ -27,7 +27,7 @@ public suspend fun RoutingContext.checkVeilederTilgang(
     val personIdent = call.getPersonIdent()
         ?: throw IllegalArgumentException("Failed to $action: No $NAV_PERSONIDENT_HEADER supplied in request header")
 
-    checkVeilederTilgang(
+    checkVeilederTilgangToPerson(
         action = action,
         personIdent = personIdent,
         tilgangskontrollClient = tilgangskontrollClient,
@@ -48,7 +48,7 @@ public suspend fun RoutingContext.checkVeilederTilgang(
  * @param requiresWriteAccess If true, checks for fullTilgang (write access) rather than read access.
  * @param block The handler to execute if access is granted.
  */
-public suspend fun RoutingContext.checkVeilederTilgang(
+public suspend fun RoutingContext.checkVeilederTilgangToPerson(
     action: String,
     personIdent: String,
     tilgangskontrollClient: TilgangskontrollClient,

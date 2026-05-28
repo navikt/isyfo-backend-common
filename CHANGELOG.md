@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.0.29]
+
+### Changed
+- Renamed `checkVeilederTilgang` to `checkVeilederTilgangTilPerson` in `tilgangskontroll.ktor` package.
+
 ## [0.0.28]
 
 ### Changed

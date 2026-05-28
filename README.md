@@ -13,7 +13,7 @@ Some helpers are for Ktor apps, while non-Ktor apps can use parts of the library
 
 ### Veileder access control
 - `TilgangskontrollClient` — read/write access checks against `istilgangskontroll`
-- Ktor convenience helpers such as `checkVeilederTilgang(...)`
+- Ktor convenience helpers such as `checkVeilederTilgangToPerson(...)`
 
 ### JWT authentication
 - `installJwtAuthentication()` — Ktor plugin for validating incoming Azure AD JWTs
