@@ -9,17 +9,21 @@ import no.nav.syfo.common.util.ktor.getCallId
 import no.nav.syfo.common.util.ktor.getPersonIdent
 
 /**
- * Reads the `Nav-Personident` header from the request, checks access via [tilgangskontrollClient],
- * and executes [block] if access is granted. Throws [VeilederTilgangForbiddenException] if denied.
+ * ktor [RoutingContext] convenience helper for using [TilgangskontrollClient] for access control. Checks both that the
+ * user has populasjonstilgang to a specific citizen, and that the user has the necessary Modia SYFO fag-tilgang, and
+ * executes wrapped code if checks pass.
+ * Reads the `nav-Personident` header from the request to get the id number of the citizen to check access to, so
+ * this overload requires that header to be present.
  *
- * This overload reads the personIdent from the `Nav-Personident` request header automatically.
+ * Throws [VeilederTilgangForbiddenException] if denied.
  *
  * @param action Short description of the action being performed, used in error messages.
- * @param tilgangskontrollClient Client used to check access.
- * @param requiresWriteAccess If true, checks for fullTilgang (write access) rather than read access.
+ * @param tilgangskontrollClient Configured [TilgangskontrollClient] used to check access.
+ * @param requiresWriteAccess If true, checks for fag-tilgangen fullTilgang (write access) rather than fagtilgangen for
+ *                            read access.
  * @param block The handler to execute if access is granted.
  */
-public suspend fun RoutingContext.checkVeilederTilgangToPerson(
+public suspend fun RoutingContext.checkPersonAndSyfoTilgang(
     action: String,
     tilgangskontrollClient: TilgangskontrollClient,
     requiresWriteAccess: Boolean = false,
@@ -28,7 +32,7 @@ public suspend fun RoutingContext.checkVeilederTilgangToPerson(
     val personIdent = call.getPersonIdent()
         ?: throw IllegalArgumentException("Failed to $action: No $NAV_PERSONIDENT_HEADER supplied in request header")
 
-    checkVeilederTilgangToPerson(
+    checkPersonAndSyfoTilgang(
         action = action,
         personIdent = personIdent,
         tilgangskontrollClient = tilgangskontrollClient,
@@ -38,18 +42,21 @@ public suspend fun RoutingContext.checkVeilederTilgangToPerson(
 }
 
 /**
- * Checks veileder access for an explicitly provided [personIdent], then executes [block] if granted.
- * Throws [VeilederTilgangForbiddenException] if denied.
+ * ktor [RoutingContext] convenience helper for using [TilgangskontrollClient] for access control. Checks both that the
+ * user has populasjonstilgang to a specific citizen, and that the user has the necessary Modia SYFO fag-tilgang, and
+ * executes wrapped code if checks pass.
  *
- * Use this overload when the personIdent comes from the request body rather than the `Nav-Personident` header.
+ * Use this overload when the personIdent comes from the request body rather than the `nav-personident` header.
+ *
+ * Throws [VeilederTilgangForbiddenException] if denied.
  *
  * @param action Short description of the action being performed, used in error messages.
  * @param personIdent The person's national identity number to check access for.
- * @param tilgangskontrollClient Client used to check access.
+ * @param tilgangskontrollClient Configured [TilgangskontrollClient] used to check access.
  * @param requiresWriteAccess If true, checks for fullTilgang (write access) rather than read access.
  * @param block The handler to execute if access is granted.
  */
-public suspend fun RoutingContext.checkVeilederTilgangToPerson(
+public suspend fun RoutingContext.checkPersonAndSyfoTilgang(
     action: String,
     personIdent: String,
     tilgangskontrollClient: TilgangskontrollClient,
