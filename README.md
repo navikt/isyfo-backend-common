@@ -119,3 +119,4 @@ Remember to remove `mavenLocal()` before merging — it should not be in the fin
 - [Token providers](docs/token.md) — `EntraIdClient` (Texas) and `AzureAdClient`
 - [Veileder tilgangskontroll](docs/tilgangskontroll.md) — `TilgangskontrollClient` and Ktor helpers
 - [JWT authentication](docs/auth.md) — `installJwtAuthentication`, `getWellKnown`, `JwtIssuer`
+- [Testing utilities](docs/testing.md) — `MockTilgang`, `MockAzureAdTokenResponse` (test fixtures)

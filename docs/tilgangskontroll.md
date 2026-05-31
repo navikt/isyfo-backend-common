@@ -49,7 +49,7 @@ route("/api") {
         val requestDTO = call.receive<RequestDTO>()
         checkVeilederTilgangToPerson(
             action = "write person",
-            personIdent = requestDTO.personIdent,
+            personIdent = PersonIdent(requestDTO.personIdent),
             veilederTilgangskontrollClient = tilgangskontrollClient,
             requiresWriteAccess = true,
         ) {
@@ -69,13 +69,13 @@ Required request headers when using the Ktor helper:
 ```kotlin
 val hasReadAccess = tilgangskontrollClient.hasAccess(
     callId = "call-id",
-    personIdent = "12345678910",
+    personIdent = PersonIdent("12345678910"),
     token = incomingToken,
 )
 
 val hasWriteAccess = tilgangskontrollClient.hasWriteAccess(
     callId = "call-id",
-    personIdent = "12345678910",
+    personIdent = PersonIdent("12345678910"),
     token = incomingToken,
 )
 ```
@@ -84,9 +84,8 @@ val hasWriteAccess = tilgangskontrollClient.hasWriteAccess(
 
 ```kotlin
 val accessiblePersonIdenter: List<String>? = tilgangskontrollClient.personsVeilederHasAccessTo(
-    personIdenter = listOf("12345678910", "10987654321"),
+    personIdenter = listOf(PersonIdent("12345678910"), PersonIdent("10987654321")),
     token = incomingToken,
     callId = "call-id",
 )
 ```
-

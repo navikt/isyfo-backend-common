@@ -1,7 +1,7 @@
 import com.adarshr.gradle.testlogger.theme.ThemeType
 
 group = "no.nav.syfo"
-version = "0.0.32"
+version = "0.0.33"
 description = "Shared Kotlin library for checking veileder access via istilgangskontroll"
 
 val jacksonDataTypeVersion = "2.21.2"
@@ -15,6 +15,7 @@ val slf4jVersion = "2.0.17"
 plugins {
     kotlin("jvm") version "2.3.10"
     `java-library`
+    `java-test-fixtures`
     `maven-publish`
     id("org.jlleitschuh.gradle.ktlint") version "11.6.1"
     id("com.adarshr.test-logger") version "4.0.0"

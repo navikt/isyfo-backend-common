@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.0.33]
+
+### Added
+- Test fixtures (`testFixtures` classifier): `MockTilgang` and `MockAzureAdTokenResponse` in `no.nav.syfo.common.mock`. See [docs/testing.md](docs/testing.md).
+
 ## [0.0.32]
 
 ### Added
