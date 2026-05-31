@@ -10,6 +10,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
+import no.nav.syfo.common.person.PersonIdent
 import no.nav.syfo.common.tilgangskontroll.VeilederTilgangForbiddenException
 import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
 import no.nav.syfo.common.util.NAV_CALL_ID_HEADER
@@ -23,7 +24,7 @@ import org.junit.jupiter.api.Test
 class TilgangskontrollExtensionsTest {
     private val action = "read aktivitetskrav"
     private val callId = "123"
-    private val personIdent = "12345678910"
+    private val personIdent = PersonIdent("12345678910")
     private val token = "token"
 
     private val tilgangskontrollClient = mockk<TilgangskontrollClient>()
@@ -33,7 +34,7 @@ class TilgangskontrollExtensionsTest {
         val routingContext = routingContextWithHeaders(
             headers = Headers.build {
                 append(NAV_CALL_ID_HEADER, callId)
-                append(NAV_PERSONIDENT_HEADER, personIdent)
+                append(NAV_PERSONIDENT_HEADER, personIdent.value)
                 append(HttpHeaders.Authorization, bearerHeader(token))
             }
         )
@@ -66,7 +67,7 @@ class TilgangskontrollExtensionsTest {
         val routingContext = routingContextWithHeaders(
             headers = Headers.build {
                 append(NAV_CALL_ID_HEADER, callId)
-                append(NAV_PERSONIDENT_HEADER, personIdent)
+                append(NAV_PERSONIDENT_HEADER, personIdent.value)
                 append(HttpHeaders.Authorization, bearerHeader(token))
             }
         )
@@ -100,7 +101,7 @@ class TilgangskontrollExtensionsTest {
         val routingContext = routingContextWithHeaders(
             headers = Headers.build {
                 append(NAV_CALL_ID_HEADER, callId)
-                append(NAV_PERSONIDENT_HEADER, personIdent)
+                append(NAV_PERSONIDENT_HEADER, personIdent.value)
                 append(HttpHeaders.Authorization, bearerHeader(token))
             }
         )
@@ -132,7 +133,7 @@ class TilgangskontrollExtensionsTest {
         val routingContext = routingContextWithHeaders(
             headers = Headers.build {
                 append(NAV_CALL_ID_HEADER, callId)
-                append(NAV_PERSONIDENT_HEADER, personIdent)
+                append(NAV_PERSONIDENT_HEADER, personIdent.value)
             }
         )
 

@@ -1,6 +1,7 @@
 package no.nav.syfo.common.tilgangskontroll.ktor
 
 import io.ktor.server.routing.RoutingContext
+import no.nav.syfo.common.person.PersonIdent
 import no.nav.syfo.common.tilgangskontroll.VeilederTilgangForbiddenException
 import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
 import no.nav.syfo.common.util.NAV_PERSONIDENT_HEADER
@@ -58,7 +59,7 @@ public suspend fun RoutingContext.checkPersonAndSyfoTilgang(
  */
 public suspend fun RoutingContext.checkPersonAndSyfoTilgang(
     action: String,
-    personIdent: String,
+    personIdent: PersonIdent,
     tilgangskontrollClient: TilgangskontrollClient,
     requiresWriteAccess: Boolean = false,
     block: suspend () -> Unit

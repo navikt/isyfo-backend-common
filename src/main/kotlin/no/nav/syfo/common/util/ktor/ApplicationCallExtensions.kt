@@ -3,6 +3,7 @@ package no.nav.syfo.common.util.ktor
 import com.auth0.jwt.JWT
 import io.ktor.http.HttpHeaders
 import io.ktor.server.application.ApplicationCall
+import no.nav.syfo.common.person.PersonIdent
 import no.nav.syfo.common.util.NAV_CALL_ID_HEADER
 import no.nav.syfo.common.util.NAV_PERSONIDENT_HEADER
 
@@ -12,8 +13,10 @@ public const val JWT_CLAIM_NAVIDENT: String = "NAVident"
 /** Returns the value of the `Nav-Call-Id` request header, used for distributed tracing. */
 public fun ApplicationCall.getCallId(): String = this.request.headers[NAV_CALL_ID_HEADER].toString()
 
-/** Returns the value of the `nav-personident` request header, or null if not present. */
-public fun ApplicationCall.getPersonIdent(): String? = this.request.headers[NAV_PERSONIDENT_HEADER]
+/** Returns the value of the `nav-personident` request header as a [PersonIdent], or null if not present.
+ * Throws [IllegalArgumentException] if the header value is not a valid 11-digit identity number. */
+public fun ApplicationCall.getPersonIdent(): PersonIdent? =
+    this.request.headers[NAV_PERSONIDENT_HEADER]?.let { PersonIdent(it) }
 
 /**
  * Returns the `azp` (authorized party) claim from the incoming Bearer token, identifying the calling application.

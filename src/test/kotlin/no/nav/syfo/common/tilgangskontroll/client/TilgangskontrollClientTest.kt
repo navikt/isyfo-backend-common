@@ -10,6 +10,7 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.common.http.commonConfig
+import no.nav.syfo.common.person.PersonIdent
 import no.nav.syfo.common.testhelper.receiveBody
 import no.nav.syfo.common.testhelper.respond
 import no.nav.syfo.common.token.OboTokenProvider
@@ -33,7 +34,7 @@ class TilgangskontrollClientTest {
     private val token = "token"
     private val oboToken = "obo-token"
     private val callId = "call-id"
-    private val personIdent = "12345678910"
+    private val personIdent = PersonIdent("12345678910")
     private val clientConfig = ClientConfig(
         baseUrl = "isTilgangskontrollUrl",
         clientId = "dev-fss.teamsykefravr.istilgangskontroll"
@@ -83,7 +84,7 @@ class TilgangskontrollClientTest {
         }
 
         assertEquals(bearerHeader(oboToken), authorizationHeader)
-        assertEquals(personIdent, personIdentHeader)
+        assertEquals(personIdent.value, personIdentHeader)
         assertEquals(callId, callIdHeader)
     }
 
@@ -149,7 +150,7 @@ class TilgangskontrollClientTest {
 
     @Test
     fun `personsVeilederHasAccessTo returns filtered personIdent list and sends expected payload`() {
-        val requestedPersonidenter = listOf(personIdent, "10987654321")
+        val requestedPersonidenter = listOf(personIdent, PersonIdent("10987654321"))
         lateinit var authorizationHeader: String
         lateinit var callIdHeader: String
         lateinit var requestBody: List<String>
@@ -161,7 +162,7 @@ class TilgangskontrollClientTest {
                     authorizationHeader = request.headers[HttpHeaders.Authorization].orEmpty()
                     callIdHeader = request.headers[NAV_CALL_ID_HEADER].orEmpty()
                     requestBody = request.receiveBody()
-                    respond(listOf(personIdent))
+                    respond(listOf(personIdent.value))
                 }
             }
         }
@@ -183,7 +184,7 @@ class TilgangskontrollClientTest {
         assertEquals(listOf(personIdent), tilgang)
         assertEquals(bearerHeader(oboToken), authorizationHeader)
         assertEquals(callId, callIdHeader)
-        assertEquals(requestedPersonidenter, requestBody)
+        assertEquals(requestedPersonidenter.map { it.value }, requestBody)
     }
 
     @Test

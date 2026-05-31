@@ -15,6 +15,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import no.nav.syfo.common.http.defaultHttpClient
+import no.nav.syfo.common.person.PersonIdent
 import no.nav.syfo.common.token.OboTokenProvider
 import no.nav.syfo.common.util.ClientConfig
 import no.nav.syfo.common.util.NAV_CALL_ID_HEADER
@@ -85,8 +86,8 @@ public class TilgangskontrollClient(
      * @param personIdent The person's national identity number (fødselsnummer).
      * @param token The veileder's incoming Bearer token (without the "Bearer " prefix).
      */
-    public suspend fun hasAccess(callId: String, personIdent: String, token: String): Boolean {
-        return getTilgang(callId, personIdent, token)?.erGodkjent ?: false
+    public suspend fun hasAccess(callId: String, personIdent: PersonIdent, token: String): Boolean {
+        return getTilgang(callId, personIdent.value, token)?.erGodkjent ?: false
     }
 
     /**
@@ -97,8 +98,8 @@ public class TilgangskontrollClient(
      * @param personIdent The person's national identity number (fødselsnummer).
      * @param token The veileder's incoming Bearer token (without the "Bearer " prefix).
      */
-    public suspend fun hasWriteAccess(callId: String, personIdent: String, token: String): Boolean {
-        return getTilgang(callId, personIdent, token)?.let {
+    public suspend fun hasWriteAccess(callId: String, personIdent: PersonIdent, token: String): Boolean {
+        return getTilgang(callId, personIdent.value, token)?.let {
             it.erGodkjent && it.fullTilgang
         } ?: false
     }
@@ -112,10 +113,10 @@ public class TilgangskontrollClient(
      * @param callId Forwarded to istilgangskontroll as the `Nav-Call-Id` request header for tracing across services.
      */
     public suspend fun personsVeilederHasAccessTo(
-        personIdenter: List<String>,
+        personIdenter: List<PersonIdent>,
         token: String,
         callId: String
-    ): List<String>? {
+    ): List<PersonIdent>? {
         val oboToken = oboTokenProvider.getOnBehalfOfToken(
             targetClientId = clientConfig.clientId,
             token = token
@@ -127,9 +128,9 @@ public class TilgangskontrollClient(
                 header(NAV_CALL_ID_HEADER, callId)
                 accept(ContentType.Application.Json)
                 header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-                setBody(personIdenter)
+                setBody(personIdenter.map { it.value })
             }
-            response.body<List<String>>()
+            response.body<List<String>>().map { PersonIdent(it) }
         } catch (e: ClientRequestException) {
             if (e.response.status == HttpStatusCode.Forbidden) {
                 log.warn("Forbidden to request access to list of person from istilgangskontroll")

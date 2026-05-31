@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.0.32]
+
+### Added
+- `PersonIdent` value type in `no.nav.syfo.common.person`. Validates that the value is exactly 11 digits; throws `IllegalArgumentException` on invalid input.
+- `ApplicationCall.getPersonIdent()` now returns `PersonIdent?` instead of `String?`. Throws `IllegalArgumentException` if the header value is present but not a valid 11-digit identity number.
+- `checkPersonAndSyfoTilgang` overload that takes an explicit `personIdent` parameter now accepts `PersonIdent` instead of `String`.
+- `TilgangskontrollClient.hasAccess` and `hasWriteAccess` now accept `PersonIdent` instead of `String` for the `personIdent` parameter.
+- `TilgangskontrollClient.personsVeilederHasAccessTo` now accepts `List<PersonIdent>` and returns `List<PersonIdent>?`.
+
+### Changed
+- Renamed `checkVeilederTilgangToPerson` to `checkPersonAndSyfoTilgang` in the `tilgangskontroll.ktor` package.
+
 ## [0.0.31]
 
 ### Added
