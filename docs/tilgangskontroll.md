@@ -83,7 +83,7 @@ val hasWriteAccess = tilgangskontrollClient.hasWriteAccess(
 ### Check if veileder has access to multiple persons in one call
 
 ```kotlin
-val accessiblePersonIdenter: List<String>? = tilgangskontrollClient.personsVeilederHasAccessTo(
+val accessiblePersonIdenter: List<String>? = tilgangskontrollClient.personsUserHasAccessTo(
     personIdenter = listOf(PersonIdent("12345678910"), PersonIdent("10987654321")),
     token = incomingToken,
     callId = "call-id",

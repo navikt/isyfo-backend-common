@@ -149,7 +149,7 @@ class TilgangskontrollClientTest {
     }
 
     @Test
-    fun `personsVeilederHasAccessTo returns filtered personIdent list and sends expected payload`() {
+    fun `personsUserHasAccessTo returns filtered personIdent list and sends expected payload`() {
         val requestedPersonidenter = listOf(personIdent, PersonIdent("10987654321"))
         lateinit var authorizationHeader: String
         lateinit var callIdHeader: String
@@ -174,7 +174,7 @@ class TilgangskontrollClientTest {
         )
 
         val tilgang = runBlocking {
-            client.personsVeilederHasAccessTo(
+            client.personsUserHasAccessTo(
                 personIdenter = requestedPersonidenter,
                 token = token,
                 callId = callId
@@ -188,11 +188,11 @@ class TilgangskontrollClientTest {
     }
 
     @Test
-    fun `personsVeilederHasAccessTo returns null when istilgangskontroll responds forbidden`() {
+    fun `personsUserHasAccessTo returns null when istilgangskontroll responds forbidden`() {
         val client = createMockClientForResponse(status = HttpStatusCode.Forbidden)
 
         val tilgang = runBlocking {
-            client.personsVeilederHasAccessTo(
+            client.personsUserHasAccessTo(
                 personIdenter = listOf(personIdent),
                 token = token,
                 callId = callId
