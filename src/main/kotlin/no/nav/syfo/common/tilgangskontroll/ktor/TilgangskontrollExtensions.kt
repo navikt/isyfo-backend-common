@@ -1,7 +1,7 @@
 package no.nav.syfo.common.tilgangskontroll.ktor
 
 import io.ktor.server.routing.RoutingContext
-import no.nav.syfo.common.tilgangskontroll.VeilederTilgangForbiddenException
+import no.nav.syfo.common.tilgangskontroll.TilgangDeniedException
 import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
 import no.nav.syfo.common.util.ktor.bearerToken
 import no.nav.syfo.common.util.ktor.callId
@@ -11,10 +11,12 @@ import no.nav.syfo.common.util.ktor.personIdent
  * ktor [RoutingContext] convenience helper for using [TilgangskontrollClient] for access control. Checks both that the
  * user has populasjonstilgang to a specific citizen, and that the user has the necessary Modia SYFO fag-tilgang, and
  * executes wrapped code if checks pass.
- * Reads the `nav-Personident` header from the request to get the id number of the citizen to check access to, so
- * this overload requires that header to be present.
+ * Reads the `nav-personident` header from the request to get the id number of the citizen to check access to.
  *
- * Throws [VeilederTilgangForbiddenException] if denied.
+ * Throws [TilgangDeniedException] if access is denied.
+ * Expects `nav-personident` header, otherwise throws [IllegalArgumentException].
+ * Expects user bearer token on authorization header, otherwise throws [IllegalArgumentException].
+ * Tries to read call id from call id header, but does not throw if it's missing.
  *
  * @param action Short description of the action being performed, used in error messages.
  * @param tilgangskontrollClient Configured [TilgangskontrollClient] used to check access.
@@ -46,7 +48,9 @@ public suspend fun RoutingContext.checkPersonAndSyfoTilgang(
  *
  * Use this overload when the personIdent comes from the request body rather than the `nav-personident` header.
  *
- * Throws [VeilederTilgangForbiddenException] if denied.
+ * Throws [TilgangDeniedException] if denied.
+ * Expects user bearer token on authorization header, otherwise throws [IllegalArgumentException].
+ * Expects call id from call id header, but does not throw if it's missing.
  *
  * @param action Short description of the action being performed, used in error messages.
  * @param personIdent The person's national identity number to check access for.
@@ -61,8 +65,8 @@ public suspend fun RoutingContext.checkPersonAndSyfoTilgang(
     requiresWriteAccess: Boolean = false,
     block: suspend () -> Unit
 ) {
-    val callId = call.callId
     val token = call.bearerToken
+    val callId = call.callId
 
     val hasAccess = if (requiresWriteAccess) {
         tilgangskontrollClient.hasWriteAccess(
@@ -79,7 +83,7 @@ public suspend fun RoutingContext.checkPersonAndSyfoTilgang(
     }
 
     if (!hasAccess) {
-        throw VeilederTilgangForbiddenException(action = action)
+        throw TilgangDeniedException(action = action)
     } else {
         block()
     }

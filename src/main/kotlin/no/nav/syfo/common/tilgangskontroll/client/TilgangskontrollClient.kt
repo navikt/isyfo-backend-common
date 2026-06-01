@@ -91,11 +91,11 @@ public class TilgangskontrollClient(
     }
 
     /**
-     * Returns true if the user has write access (fullTilgang) to the given person.
+     * Returns true if the user has write access (fullTilgang) and access to the given citizen person.
      * Returns false if the user does not have access to the person, or if the user does not have fullTilgang.
      *
      * @param callId Forwarded to istilgangskontroll as the `Nav-Call-Id` request header for tracing across services.
-     * @param personIdent The person's national identity number (fødselsnummer).
+     * @param personIdent The national identity number (fødselsnummer) of person to check if user has access to.
      * @param token The user's incoming Bearer token (without the "Bearer " prefix).
      */
     public suspend fun hasWriteAccess(callId: String, personIdent: String, token: String): Boolean {
@@ -108,9 +108,8 @@ public class TilgangskontrollClient(
      * Returns the subset of the given [personIdenter] that the user has access to.
      * Returns null on error or if access is forbidden entirely.
      *
-     * @param personIdenter List of national identity numbers (fødselsnummer) to check.
+     * @param personIdenter List of national identity numbers (fødselsnummer) to check if user has access to.
      * @param token The user's incoming Bearer token (without the "Bearer " prefix).
-     * @param callId Forwarded to istilgangskontroll as the `Nav-Call-Id` request header for tracing across services.
      */
     public suspend fun personsUserHasAccessTo(
         personIdenter: List<String>,
