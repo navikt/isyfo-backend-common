@@ -4,10 +4,9 @@ import io.ktor.server.routing.RoutingContext
 import no.nav.syfo.common.person.PersonIdent
 import no.nav.syfo.common.tilgangskontroll.VeilederTilgangForbiddenException
 import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
-import no.nav.syfo.common.util.NAV_PERSONIDENT_HEADER
-import no.nav.syfo.common.util.ktor.getBearerToken
-import no.nav.syfo.common.util.ktor.getCallId
-import no.nav.syfo.common.util.ktor.getPersonIdent
+import no.nav.syfo.common.util.ktor.bearerToken
+import no.nav.syfo.common.util.ktor.callId
+import no.nav.syfo.common.util.ktor.personIdent
 
 /**
  * ktor [RoutingContext] convenience helper for using [TilgangskontrollClient] for access control. Checks both that the
@@ -30,8 +29,7 @@ public suspend fun RoutingContext.checkPersonAndSyfoTilgang(
     requiresWriteAccess: Boolean = false,
     block: suspend () -> Unit
 ) {
-    val personIdent = call.getPersonIdent()
-        ?: throw IllegalArgumentException("Failed to $action: No $NAV_PERSONIDENT_HEADER supplied in request header")
+    val personIdent = call.personIdent
 
     checkPersonAndSyfoTilgang(
         action = action,
@@ -64,9 +62,8 @@ public suspend fun RoutingContext.checkPersonAndSyfoTilgang(
     requiresWriteAccess: Boolean = false,
     block: suspend () -> Unit
 ) {
-    val callId = call.getCallId()
-    val token = call.getBearerToken()
-        ?: throw IllegalArgumentException("Failed to complete the following action: $action. No Authorization header supplied")
+    val callId = call.callId
+    val token = call.bearerToken
 
     val hasAccess = if (requiresWriteAccess) {
         tilgangskontrollClient.hasWriteAccess(

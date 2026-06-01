@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.0.34]
+
+### Added
+- `OrNull` variants for all `ApplicationCall` header and token-claim readers: `bearerTokenOrNull`, `callIdOrNull`, `personIdentOrNull`, `consumerClientIdOrNull()`, `navIdentOrNull()` — return `null` instead of throwing when the header or claim is absent.
+
+### Changed
+- **Breaking**: `getCallId()`, `getPersonIdent()`, `getBearerToken()` functions replaced by `callId`, `personIdent`, `bearerToken` extension properties.
+- **Breaking**: `getConsumerClientId()` renamed to `consumerClientId()`, `getNavIdent()` renamed to `navIdent()`.
+- **Breaking**: `bearerToken` and `personIdent` are now non-nullable and throw `IllegalArgumentException` if the header is absent. Previously `getBearerToken()` returned `String?` and `getPersonIdent()` returned `PersonIdent?`.
+- **Breaking**: `callId` now throws `IllegalArgumentException` if the header is absent. Previously `getCallId()` returned the string `"null"`.
+- **Breaking**: `consumerClientId()` now returns `String` and throws `IllegalArgumentException` if the `azp` claim is absent. Previously `getConsumerClientId()` returned `String?`.
+- **Breaking**: `navIdent()` now throws `IllegalArgumentException` instead of `Error` if the `NAVident` claim is missing.
+
 ## [0.0.33]
 
 ### Added
