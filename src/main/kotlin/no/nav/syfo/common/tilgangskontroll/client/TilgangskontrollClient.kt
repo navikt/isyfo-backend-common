@@ -24,12 +24,13 @@ import no.nav.syfo.common.util.bearerHeader
 import org.slf4j.LoggerFactory
 
 /**
- * Client for istilgangskontroll — the isyfo service that checks what access a veileder has to a given person.
+ * Client for istilgangskontroll — the isyfo service that checks what access a veileder or other user has to a given
+ * citizen person, and if the user has read or write access given their Modia Syfo fagtilgang.
  *
- * Uses an [OboTokenProvider] to exchange the veileder's incoming token for an OBO token scoped to istilgangskontroll
+ * Uses an [OboTokenProvider] to exchange the user's incoming token for an OBO token scoped to istilgangskontroll
  * before making requests.
  *
- * @param oboTokenProvider Supplies OBO tokens for the veileder's token. Pass an [no.nav.syfo.common.token.azuread.AzureAdClient]
+ * @param oboTokenProvider Supplies OBO tokens for the user's token. Pass an [no.nav.syfo.common.token.azuread.AzureAdClient]
  * directly, or wrap a custom token source in a lambda: `{ scopeClientId, token -> ... }`.
  * @param clientConfig [ClientConfig] for istilgangskontroll.
  * @param httpClient HTTP client to use. Defaults to [defaultHttpClient]. Override in tests with a mock engine.
@@ -80,23 +81,23 @@ public class TilgangskontrollClient(
     }
 
     /**
-     * Returns true if the veileder has read access to the given person.
+     * Returns true if the user has read access to the given person.
      *
      * @param callId Forwarded to istilgangskontroll as the `Nav-Call-Id` request header for tracing across services.
      * @param personIdent The person's national identity number (fødselsnummer).
-     * @param token The veileder's incoming Bearer token (without the "Bearer " prefix).
+     * @param token The user's incoming Bearer token (without the "Bearer " prefix).
      */
     public suspend fun hasAccess(callId: String, personIdent: PersonIdent, token: String): Boolean {
         return getTilgang(callId, personIdent.value, token)?.erGodkjent ?: false
     }
 
     /**
-     * Returns true if the veileder has write access (fullTilgang) to the given person.
-     * Returns false if the veileder does not have access to the person, or if the veileder does not have fullTilgang.
+     * Returns true if the user has write access (fullTilgang) to the given person.
+     * Returns false if the user does not have access to the person, or if the user does not have fullTilgang.
      *
      * @param callId Forwarded to istilgangskontroll as the `Nav-Call-Id` request header for tracing across services.
      * @param personIdent The person's national identity number (fødselsnummer).
-     * @param token The veileder's incoming Bearer token (without the "Bearer " prefix).
+     * @param token The user's incoming Bearer token (without the "Bearer " prefix).
      */
     public suspend fun hasWriteAccess(callId: String, personIdent: PersonIdent, token: String): Boolean {
         return getTilgang(callId, personIdent.value, token)?.let {
@@ -105,14 +106,14 @@ public class TilgangskontrollClient(
     }
 
     /**
-     * Returns the subset of [personIdenter] that the veileder has access to.
+     * Returns the subset of the given [personIdenter] that the user has access to.
      * Returns null on error or if access is forbidden entirely.
      *
      * @param personIdenter List of national identity numbers (fødselsnummer) to check.
-     * @param token The veileder's incoming Bearer token (without the "Bearer " prefix).
+     * @param token The user's incoming Bearer token (without the "Bearer " prefix).
      * @param callId Forwarded to istilgangskontroll as the `Nav-Call-Id` request header for tracing across services.
      */
-    public suspend fun personsVeilederHasAccessTo(
+    public suspend fun personsUserHasAccessTo(
         personIdenter: List<PersonIdent>,
         token: String,
         callId: String

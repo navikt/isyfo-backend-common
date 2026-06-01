@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.0.35]
+
+### Changed
+- Renamed `MockTilgang` to `MockTilgangResponse` in `no.nav.syfo.common.mock` test fixtures package.
+
 ## [0.0.34]
 
 ### Added
