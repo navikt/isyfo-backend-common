@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.0.36]
+
+### Changed
+- Revert change made in 0.0.32 to delay moving `PersonIdent` type to library and using it with tilgangskontroll and application call extension functions.
+
 ## [0.0.35]
 
 ### Changed

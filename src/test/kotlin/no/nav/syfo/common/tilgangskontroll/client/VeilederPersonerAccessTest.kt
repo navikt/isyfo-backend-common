@@ -9,7 +9,6 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.common.http.commonConfig
-import no.nav.syfo.common.person.PersonIdent
 import no.nav.syfo.common.testhelper.respond
 import no.nav.syfo.common.token.OboTokenProvider
 import no.nav.syfo.common.util.ClientConfig
@@ -28,7 +27,7 @@ class VeilederPersonerAccessTest {
     private val token = "token"
     private val oboToken = "obo-token"
     private val callId = "call-id"
-    private val personIdenter = listOf(PersonIdent("12345678910"), PersonIdent("10987654321"), PersonIdent("11223344556"))
+    private val personIdenter = listOf("12345678910", "10987654321", "11223344556")
     private val config = ClientConfig(
         baseUrl = "isTilgangskontrollUrl",
         clientId = "dev-fss.teamsykefravr.istilgangskontroll"
@@ -49,8 +48,8 @@ class VeilederPersonerAccessTest {
 
     @Test
     fun `personsUserHasAccessTo returns filtered list when access is granted`() {
-        val filteredPersonidenter = listOf(PersonIdent("12345678910"), PersonIdent("10987654321"))
-        val client = createMockClientForBatchResponse(filteredPersonidenter.map { it.value }, HttpStatusCode.OK)
+        val filteredPersonidenter = listOf("12345678910", "10987654321")
+        val client = createMockClientForBatchResponse(filteredPersonidenter, HttpStatusCode.OK)
 
         val result = runBlocking {
             client.personsUserHasAccessTo(
@@ -65,7 +64,7 @@ class VeilederPersonerAccessTest {
 
     @Test
     fun `personsUserHasAccessTo returns full list when all persons are accessible`() {
-        val client = createMockClientForBatchResponse(personIdenter.map { it.value }, HttpStatusCode.OK)
+        val client = createMockClientForBatchResponse(personIdenter, HttpStatusCode.OK)
 
         val result = runBlocking {
             client.personsUserHasAccessTo(
@@ -90,7 +89,7 @@ class VeilederPersonerAccessTest {
             )
         }
 
-        assertEquals(emptyList<PersonIdent>(), result)
+        assertEquals(emptyList<String>(), result)
     }
 
     @Test
@@ -150,12 +149,12 @@ class VeilederPersonerAccessTest {
             )
         }
 
-        assertEquals(emptyList<PersonIdent>(), result)
+        assertEquals(emptyList<String>(), result)
     }
 
     @Test
     fun `personsUserHasAccessTo calls obo token exchange before making request`() {
-        val client = createMockClientForBatchResponse(personIdenter.map { it.value }, HttpStatusCode.OK)
+        val client = createMockClientForBatchResponse(personIdenter, HttpStatusCode.OK)
 
         runBlocking {
             client.personsUserHasAccessTo(
@@ -179,7 +178,7 @@ class VeilederPersonerAccessTest {
             oboTokenProvider.getOnBehalfOfToken(any(), any())
         } returns null
 
-        val client = createMockClientForBatchResponse(personIdenter.map { it.value }, HttpStatusCode.OK)
+        val client = createMockClientForBatchResponse(personIdenter, HttpStatusCode.OK)
 
         val exception = org.junit.jupiter.api.Assertions.assertThrows(RuntimeException::class.java) {
             runBlocking {

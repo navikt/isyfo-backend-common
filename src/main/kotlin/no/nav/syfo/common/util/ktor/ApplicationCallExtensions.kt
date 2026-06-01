@@ -3,7 +3,6 @@ package no.nav.syfo.common.util.ktor
 import com.auth0.jwt.JWT
 import io.ktor.http.HttpHeaders
 import io.ktor.server.application.ApplicationCall
-import no.nav.syfo.common.person.PersonIdent
 import no.nav.syfo.common.util.NAV_CALL_ID_HEADER
 import no.nav.syfo.common.util.NAV_PERSONIDENT_HEADER
 
@@ -29,19 +28,17 @@ public val ApplicationCall.callIdOrNull: String?
 public val ApplicationCall.callId: String
     get() = callIdOrNull ?: throw IllegalArgumentException("No $NAV_CALL_ID_HEADER header supplied")
 
-/** Returns the value of the `nav-personident` request header as a [PersonIdent], or null if not present.
- * The header is used to carry the Norwegian national identity number (fødselsnummer/D-nummer) of the citizen a request
- * concerns.
- * Throws [IllegalArgumentException] if the header value is not a valid 11-digit identity number. */
-public val ApplicationCall.personIdentOrNull: PersonIdent?
-    get() = this.request.headers[NAV_PERSONIDENT_HEADER]?.let { PersonIdent(it) }
+/** Returns the value of the `nav-personident` request header, or null if not present.
+ * The header is used to carry the Norwegian national identity number (fødselsnummer/D-nummer)
+ * of the citizen a request concerns. */
+public val ApplicationCall.personIdentOrNull: String?
+    get() = this.request.headers[NAV_PERSONIDENT_HEADER]
 
-/** Returns the value of the `nav-personident` request header as a [PersonIdent].
- * The header is used to carry the Norwegian national identity number (fødselsnummer/D-nummer) of the citizen a request
- * concerns.
- * Throws [IllegalArgumentException] if the header is absent or if the header value
- * is not a valid 11-digit identity number. */
-public val ApplicationCall.personIdent: PersonIdent
+/** Returns the value of the `nav-personident` request header.
+ * The header is used to carry the Norwegian national identity number (fødselsnummer/D-nummer)
+ * of the citizen a request concerns.
+ * Throws [IllegalArgumentException] if the header is absent. */
+public val ApplicationCall.personIdent: String
     get() = personIdentOrNull ?: throw IllegalArgumentException("No $NAV_PERSONIDENT_HEADER header supplied")
 
 /** Returns the `azp` (authorized party) claim from the incoming Bearer token, or null if absent. */
