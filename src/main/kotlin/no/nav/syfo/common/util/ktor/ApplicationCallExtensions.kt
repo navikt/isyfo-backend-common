@@ -48,7 +48,8 @@ public val ApplicationCall.personIdent: String
     get() = personIdentOrNull ?: throw IllegalArgumentException("No $NAV_PERSONIDENT_HEADER header supplied")
 
 /** Returns the value of the `Nav-Call-Id` request header used for distributed tracing and correlation of log messages
- * across services. If header is missing returns "unknown" and logs a warning */
+ * across services. If header is missing returns "unknown" and logs a warning.
+ * Consider using package io.ktor.server.plugins.callid plugin version instead if app installs it. */
 public val ApplicationCall.callId: String
     get() = this.request.headers[NAV_CALL_ID_HEADER] ?: run {
         val appName = System.getenv("NAIS_APP_NAME") ?: "unknown"
