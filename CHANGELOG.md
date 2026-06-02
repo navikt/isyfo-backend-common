@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.0.38]
+
+### Changed
+- Removed ktor packages and move files up one level.
+
 ## [0.0.37]
 
 ### Changed
@@ -13,8 +18,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `callIdOrNull` property removed. `callId` no longer throws if the `Nav-Call-Id` header is absent — returns `"unknown"` and logs a warning instead.
 - `consumerClientIdOrNull()` and `consumerClientId()` functions replaced by a single `consumerClientId` property that returns `"unknown"` and logs a warning if the `azp` claim or Authorization header is absent.
 - `navIdentOrNull()` and `navIdent()` functions replaced by `navIdentOrNull` and `navIdent` extension properties. `navIdent` still throws `IllegalArgumentException` if the claim is absent.
-
-
 
 ## [0.0.36]
 
