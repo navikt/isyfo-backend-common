@@ -10,6 +10,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
  */
 public data class MockAzureAdTokenResponse(
     @field:JsonProperty("access_token") val accessToken: String = "mock-access-token",
-    @field:JsonProperty("expires_in") val expiresIn: Int = 3600,
+    @field:JsonProperty("expires_in") val expiresIn: Long = 3600,
     @field:JsonProperty("token_type") val tokenType: String = "Bearer"
 )
