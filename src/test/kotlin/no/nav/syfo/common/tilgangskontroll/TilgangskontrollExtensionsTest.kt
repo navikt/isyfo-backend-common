@@ -1,4 +1,4 @@
-package no.nav.syfo.common.tilgangskontroll.ktor
+package no.nav.syfo.common.tilgangskontroll
 
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
@@ -10,14 +10,11 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
-import no.nav.syfo.common.tilgangskontroll.TilgangDeniedException
 import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
 import no.nav.syfo.common.util.NAV_CALL_ID_HEADER
 import no.nav.syfo.common.util.NAV_PERSONIDENT_HEADER
 import no.nav.syfo.common.util.bearerHeader
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 class TilgangskontrollExtensionsTest {
@@ -52,7 +49,7 @@ class TilgangskontrollExtensionsTest {
             }
         }
 
-        assertTrue(blockCalled)
+        Assertions.assertTrue(blockCalled)
         coVerify(exactly = 1) {
             tilgangskontrollClient.hasAccess(callId, personIdent, token)
         }
@@ -86,7 +83,7 @@ class TilgangskontrollExtensionsTest {
             }
         }
 
-        assertTrue(blockCalled)
+        Assertions.assertTrue(blockCalled)
         coVerify(exactly = 1) {
             tilgangskontrollClient.hasWriteAccess(callId, personIdent, token)
         }
@@ -110,7 +107,7 @@ class TilgangskontrollExtensionsTest {
             tilgangskontrollClient.hasAccess(callId, personIdent, token)
         } returns false
 
-        assertThrows(TilgangDeniedException::class.java) {
+        Assertions.assertThrows(TilgangDeniedException::class.java) {
             runBlocking {
                 routingContext.checkPersonAndSyfoTilgang(
                     action = action,
@@ -121,7 +118,7 @@ class TilgangskontrollExtensionsTest {
             }
         }
 
-        assertFalse(blockCalled)
+        Assertions.assertFalse(blockCalled)
         coVerify(exactly = 1) {
             tilgangskontrollClient.hasAccess(callId, personIdent, token)
         }
@@ -136,7 +133,7 @@ class TilgangskontrollExtensionsTest {
             }
         )
 
-        assertThrows(IllegalArgumentException::class.java) {
+        Assertions.assertThrows(IllegalArgumentException::class.java) {
             runBlocking {
                 routingContext.checkPersonAndSyfoTilgang(
                     action = action,
@@ -162,7 +159,7 @@ class TilgangskontrollExtensionsTest {
             }
         )
 
-        assertThrows(IllegalArgumentException::class.java) {
+        Assertions.assertThrows(IllegalArgumentException::class.java) {
             runBlocking {
                 routingContext.checkPersonAndSyfoTilgang(
                     action = action,
@@ -203,7 +200,7 @@ class TilgangskontrollExtensionsTest {
             }
         }
 
-        assertTrue(blockCalled)
+        Assertions.assertTrue(blockCalled)
         coVerify(exactly = 1) {
             tilgangskontrollClient.hasAccess(callId, personIdent, token)
         }
@@ -234,7 +231,7 @@ class TilgangskontrollExtensionsTest {
             }
         }
 
-        assertTrue(blockCalled)
+        Assertions.assertTrue(blockCalled)
         coVerify(exactly = 1) {
             tilgangskontrollClient.hasWriteAccess(callId, personIdent, token)
         }
@@ -254,7 +251,7 @@ class TilgangskontrollExtensionsTest {
             tilgangskontrollClient.hasAccess(callId, personIdent, token)
         } returns false
 
-        assertThrows(TilgangDeniedException::class.java) {
+        Assertions.assertThrows(TilgangDeniedException::class.java) {
             runBlocking {
                 routingContext.checkPersonAndSyfoTilgang(
                     action = action,
@@ -266,7 +263,7 @@ class TilgangskontrollExtensionsTest {
             }
         }
 
-        assertFalse(blockCalled)
+        Assertions.assertFalse(blockCalled)
     }
 
     @Test
@@ -277,7 +274,7 @@ class TilgangskontrollExtensionsTest {
             }
         )
 
-        assertThrows(IllegalArgumentException::class.java) {
+        Assertions.assertThrows(IllegalArgumentException::class.java) {
             runBlocking {
                 routingContext.checkPersonAndSyfoTilgang(
                     action = action,

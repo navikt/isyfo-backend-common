@@ -1,10 +1,8 @@
-package no.nav.syfo.common.util.ktor
+package no.nav.syfo.common.util
 
 import com.auth0.jwt.JWT
 import io.ktor.http.*
 import io.ktor.server.application.*
-import no.nav.syfo.common.util.NAV_CALL_ID_HEADER
-import no.nav.syfo.common.util.NAV_PERSONIDENT_HEADER
 import org.slf4j.LoggerFactory
 
 private val log = LoggerFactory.getLogger("no.nav.syfo.common.token.texas.TexasHttp")

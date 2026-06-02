@@ -1,11 +1,10 @@
-package no.nav.syfo.common.tilgangskontroll.ktor
+package no.nav.syfo.common.tilgangskontroll
 
 import io.ktor.server.routing.RoutingContext
-import no.nav.syfo.common.tilgangskontroll.TilgangDeniedException
 import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
-import no.nav.syfo.common.util.ktor.bearerToken
-import no.nav.syfo.common.util.ktor.callId
-import no.nav.syfo.common.util.ktor.personIdent
+import no.nav.syfo.common.util.bearerToken
+import no.nav.syfo.common.util.callId
+import no.nav.syfo.common.util.personIdent
 
 /**
  * ktor [RoutingContext] convenience helper for using [TilgangskontrollClient] for access control. Checks both that the
