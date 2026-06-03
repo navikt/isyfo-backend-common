@@ -11,9 +11,11 @@ package no.nav.syfo.common.token.texas
  *
  * @see <a href="https://docs.nais.io/auth/">Nais auth documentation</a>
  */
-public enum class TexasIdentityProvider(internal val value: String) {
+public enum class TexasIdentityProvider(
+    internal val value: String,
+) {
     /** Entra ID (formerly Azure AD) — for employees and internal services. */
-    ENTRA_ID("entra_id")
+    ENTRA_ID("entra_id"),
 }
 
 internal fun TexasIdentityProvider.formatTarget(targetClientId: String): String =

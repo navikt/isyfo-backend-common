@@ -15,7 +15,7 @@ plugins {
     `java-library`
     `java-test-fixtures`
     `maven-publish`
-    id("org.jlleitschuh.gradle.ktlint") version "11.6.1"
+    id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
     id("com.adarshr.test-logger") version "4.0.0"
     id("com.github.ben-manes.versions") version "0.54.0"
 }

@@ -6,5 +6,5 @@ package no.nav.syfo.common.mock
  */
 public data class MockTilgangResponse(
     val erGodkjent: Boolean,
-    val fullTilgang: Boolean
+    val fullTilgang: Boolean,
 )

@@ -6,5 +6,5 @@ package no.nav.syfo.common.tilgangskontroll
  */
 public class TilgangDeniedException(
     action: String,
-    message: String = "Failed to $action: Access denied – User does not have required persontilgang or fagtilgang."
+    message: String = "Failed to $action: Access denied – User does not have required persontilgang or fagtilgang.",
 ) : RuntimeException(message)

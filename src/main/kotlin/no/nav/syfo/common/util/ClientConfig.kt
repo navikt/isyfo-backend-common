@@ -12,7 +12,7 @@ package no.nav.syfo.common.util
  */
 public data class ClientConfig(
     val baseUrl: String,
-    val clientId: String
+    val clientId: String,
 )
 
 /**
@@ -23,5 +23,5 @@ public data class ClientConfig(
  *  construct HTTP request URLs.
  */
 public data class OpenClientConfig(
-    val baseUrl: String
+    val baseUrl: String,
 )

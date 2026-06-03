@@ -17,11 +17,13 @@ import no.nav.syfo.common.token.SystemTokenProvider
  * @see <a href="https://docs.nais.io/auth/entra-id/">Nais Entra ID documentation</a>
  */
 public class EntraIdClient(
-    private val httpClient: HttpClient = defaultHttpClient()
-) : OboTokenProvider, SystemTokenProvider {
-
-    override suspend fun getOnBehalfOfToken(targetClientId: String, token: String): String? =
-        texasOboToken(httpClient, TexasIdentityProvider.ENTRA_ID, targetClientId, token)
+    private val httpClient: HttpClient = defaultHttpClient(),
+) : OboTokenProvider,
+    SystemTokenProvider {
+    override suspend fun getOnBehalfOfToken(
+        targetClientId: String,
+        token: String,
+    ): String? = texasOboToken(httpClient, TexasIdentityProvider.ENTRA_ID, targetClientId, token)
 
     override suspend fun getSystemToken(targetClientId: String): String? =
         texasSystemToken(httpClient, TexasIdentityProvider.ENTRA_ID, targetClientId)

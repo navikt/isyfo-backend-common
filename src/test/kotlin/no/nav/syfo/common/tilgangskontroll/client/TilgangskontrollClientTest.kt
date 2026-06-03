@@ -32,10 +32,11 @@ class TilgangskontrollClientTest {
     private val oboToken = "obo-token"
     private val callId = "call-id"
     private val personIdent = "12345678910"
-    private val clientConfig = ClientConfig(
-        baseUrl = "isTilgangskontrollUrl",
-        clientId = "dev-fss.teamsykefravr.istilgangskontroll"
-    )
+    private val clientConfig =
+        ClientConfig(
+            baseUrl = "isTilgangskontrollUrl",
+            clientId = "dev-fss.teamsykefravr.istilgangskontroll",
+        )
     private val oboTokenProvider = mockk<OboTokenProvider>()
 
     @BeforeEach
@@ -58,23 +59,25 @@ class TilgangskontrollClientTest {
 
         // In order to intercept the headers that istilgangskontroll would be called with, this test
         // sets up httpClient and TilgangskontrollClient manually instead of using createMockClientForResponse().
-        val httpClient = HttpClient(MockEngine) {
-            commonConfig()
-            engine {
-                addHandler { request ->
-                    authorizationHeader = request.headers[HttpHeaders.Authorization].orEmpty()
-                    personIdentHeader = request.headers[NAV_PERSONIDENT_HEADER].orEmpty()
-                    callIdHeader = request.headers[NAV_CALL_ID_HEADER].orEmpty()
-                    respond(Tilgang(erGodkjent = true))
+        val httpClient =
+            HttpClient(MockEngine) {
+                commonConfig()
+                engine {
+                    addHandler { request ->
+                        authorizationHeader = request.headers[HttpHeaders.Authorization].orEmpty()
+                        personIdentHeader = request.headers[NAV_PERSONIDENT_HEADER].orEmpty()
+                        callIdHeader = request.headers[NAV_CALL_ID_HEADER].orEmpty()
+                        respond(Tilgang(erGodkjent = true))
+                    }
                 }
             }
-        }
 
-        val client = TilgangskontrollClient(
-            oboTokenProvider = oboTokenProvider,
-            clientConfig = clientConfig,
-            httpClient = httpClient
-        )
+        val client =
+            TilgangskontrollClient(
+                oboTokenProvider = oboTokenProvider,
+                clientConfig = clientConfig,
+                httpClient = httpClient,
+            )
 
         runBlocking {
             assertTrue(client.hasAccess(callId, personIdent, token))
@@ -147,25 +150,26 @@ class TilgangskontrollClientTest {
 
     private fun createMockClientForResponse(
         tilgang: Tilgang = Tilgang(erGodkjent = true),
-        status: HttpStatusCode = HttpStatusCode.OK
+        status: HttpStatusCode = HttpStatusCode.OK,
     ): TilgangskontrollClient {
-        val httpClient = HttpClient(MockEngine) {
-            commonConfig()
-            engine {
-                addHandler {
-                    if (status == HttpStatusCode.OK) {
-                        respond(tilgang, status)
-                    } else {
-                        respondError(status)
+        val httpClient =
+            HttpClient(MockEngine) {
+                commonConfig()
+                engine {
+                    addHandler {
+                        if (status == HttpStatusCode.OK) {
+                            respond(tilgang, status)
+                        } else {
+                            respondError(status)
+                        }
                     }
                 }
             }
-        }
 
         return TilgangskontrollClient(
             oboTokenProvider = oboTokenProvider,
             clientConfig = clientConfig,
-            httpClient = httpClient
+            httpClient = httpClient,
         )
     }
 }

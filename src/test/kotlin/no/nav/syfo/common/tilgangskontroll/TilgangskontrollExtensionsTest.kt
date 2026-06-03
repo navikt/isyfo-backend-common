@@ -27,13 +27,15 @@ class TilgangskontrollExtensionsTest {
 
     @Test
     fun `calls hasAccess and executes block when read access is granted`() {
-        val routingContext = routingContextWithHeaders(
-            headers = Headers.build {
-                append(NAV_CALL_ID_HEADER, callId)
-                append(NAV_PERSONIDENT_HEADER, personIdent)
-                append(HttpHeaders.Authorization, bearerHeader(token))
-            }
-        )
+        val routingContext =
+            routingContextWithHeaders(
+                headers =
+                    Headers.build {
+                        append(NAV_CALL_ID_HEADER, callId)
+                        append(NAV_PERSONIDENT_HEADER, personIdent)
+                        append(HttpHeaders.Authorization, bearerHeader(token))
+                    },
+            )
         var blockCalled = false
 
         coEvery {
@@ -43,7 +45,7 @@ class TilgangskontrollExtensionsTest {
         runBlocking {
             routingContext.checkPersonAndSyfoTilgang(
                 action = action,
-                tilgangskontrollClient = tilgangskontrollClient
+                tilgangskontrollClient = tilgangskontrollClient,
             ) {
                 blockCalled = true
             }
@@ -60,13 +62,15 @@ class TilgangskontrollExtensionsTest {
 
     @Test
     fun `calls hasWriteAccess and executes block when write access is granted`() {
-        val routingContext = routingContextWithHeaders(
-            headers = Headers.build {
-                append(NAV_CALL_ID_HEADER, callId)
-                append(NAV_PERSONIDENT_HEADER, personIdent)
-                append(HttpHeaders.Authorization, bearerHeader(token))
-            }
-        )
+        val routingContext =
+            routingContextWithHeaders(
+                headers =
+                    Headers.build {
+                        append(NAV_CALL_ID_HEADER, callId)
+                        append(NAV_PERSONIDENT_HEADER, personIdent)
+                        append(HttpHeaders.Authorization, bearerHeader(token))
+                    },
+            )
         var blockCalled = false
 
         coEvery {
@@ -77,7 +81,7 @@ class TilgangskontrollExtensionsTest {
             routingContext.checkPersonAndSyfoTilgang(
                 action = action,
                 tilgangskontrollClient = tilgangskontrollClient,
-                requiresWriteAccess = true
+                requiresWriteAccess = true,
             ) {
                 blockCalled = true
             }
@@ -94,13 +98,15 @@ class TilgangskontrollExtensionsTest {
 
     @Test
     fun `throws forbidden and does not execute block when read access is denied`() {
-        val routingContext = routingContextWithHeaders(
-            headers = Headers.build {
-                append(NAV_CALL_ID_HEADER, callId)
-                append(NAV_PERSONIDENT_HEADER, personIdent)
-                append(HttpHeaders.Authorization, bearerHeader(token))
-            }
-        )
+        val routingContext =
+            routingContextWithHeaders(
+                headers =
+                    Headers.build {
+                        append(NAV_CALL_ID_HEADER, callId)
+                        append(NAV_PERSONIDENT_HEADER, personIdent)
+                        append(HttpHeaders.Authorization, bearerHeader(token))
+                    },
+            )
         var blockCalled = false
 
         coEvery {
@@ -111,7 +117,7 @@ class TilgangskontrollExtensionsTest {
             runBlocking {
                 routingContext.checkPersonAndSyfoTilgang(
                     action = action,
-                    tilgangskontrollClient = tilgangskontrollClient
+                    tilgangskontrollClient = tilgangskontrollClient,
                 ) {
                     blockCalled = true
                 }
@@ -126,18 +132,20 @@ class TilgangskontrollExtensionsTest {
 
     @Test
     fun `throws illegal argument when authorization header is missing`() {
-        val routingContext = routingContextWithHeaders(
-            headers = Headers.build {
-                append(NAV_CALL_ID_HEADER, callId)
-                append(NAV_PERSONIDENT_HEADER, personIdent)
-            }
-        )
+        val routingContext =
+            routingContextWithHeaders(
+                headers =
+                    Headers.build {
+                        append(NAV_CALL_ID_HEADER, callId)
+                        append(NAV_PERSONIDENT_HEADER, personIdent)
+                    },
+            )
 
         Assertions.assertThrows(IllegalArgumentException::class.java) {
             runBlocking {
                 routingContext.checkPersonAndSyfoTilgang(
                     action = action,
-                    tilgangskontrollClient = tilgangskontrollClient
+                    tilgangskontrollClient = tilgangskontrollClient,
                 ) {}
             }
         }
@@ -152,18 +160,20 @@ class TilgangskontrollExtensionsTest {
 
     @Test
     fun `throws illegal argument when personIdent header is missing`() {
-        val routingContext = routingContextWithHeaders(
-            headers = Headers.build {
-                append(NAV_CALL_ID_HEADER, callId)
-                append(HttpHeaders.Authorization, bearerHeader(token))
-            }
-        )
+        val routingContext =
+            routingContextWithHeaders(
+                headers =
+                    Headers.build {
+                        append(NAV_CALL_ID_HEADER, callId)
+                        append(HttpHeaders.Authorization, bearerHeader(token))
+                    },
+            )
 
         Assertions.assertThrows(IllegalArgumentException::class.java) {
             runBlocking {
                 routingContext.checkPersonAndSyfoTilgang(
                     action = action,
-                    tilgangskontrollClient = tilgangskontrollClient
+                    tilgangskontrollClient = tilgangskontrollClient,
                 ) {}
             }
         }
@@ -178,12 +188,14 @@ class TilgangskontrollExtensionsTest {
 
     @Test
     fun `explicit personIdent - calls hasAccess and executes block when read access is granted`() {
-        val routingContext = routingContextWithHeaders(
-            headers = Headers.build {
-                append(NAV_CALL_ID_HEADER, callId)
-                append(HttpHeaders.Authorization, bearerHeader(token))
-            }
-        )
+        val routingContext =
+            routingContextWithHeaders(
+                headers =
+                    Headers.build {
+                        append(NAV_CALL_ID_HEADER, callId)
+                        append(HttpHeaders.Authorization, bearerHeader(token))
+                    },
+            )
         var blockCalled = false
 
         coEvery {
@@ -194,7 +206,7 @@ class TilgangskontrollExtensionsTest {
             routingContext.checkPersonAndSyfoTilgang(
                 action = action,
                 personIdent = personIdent,
-                tilgangskontrollClient = tilgangskontrollClient
+                tilgangskontrollClient = tilgangskontrollClient,
             ) {
                 blockCalled = true
             }
@@ -208,12 +220,14 @@ class TilgangskontrollExtensionsTest {
 
     @Test
     fun `explicit personIdent - calls hasWriteAccess and executes block when write access is granted`() {
-        val routingContext = routingContextWithHeaders(
-            headers = Headers.build {
-                append(NAV_CALL_ID_HEADER, callId)
-                append(HttpHeaders.Authorization, bearerHeader(token))
-            }
-        )
+        val routingContext =
+            routingContextWithHeaders(
+                headers =
+                    Headers.build {
+                        append(NAV_CALL_ID_HEADER, callId)
+                        append(HttpHeaders.Authorization, bearerHeader(token))
+                    },
+            )
         var blockCalled = false
 
         coEvery {
@@ -225,7 +239,7 @@ class TilgangskontrollExtensionsTest {
                 action = action,
                 personIdent = personIdent,
                 tilgangskontrollClient = tilgangskontrollClient,
-                requiresWriteAccess = true
+                requiresWriteAccess = true,
             ) {
                 blockCalled = true
             }
@@ -239,12 +253,14 @@ class TilgangskontrollExtensionsTest {
 
     @Test
     fun `explicit personIdent - throws forbidden when access is denied`() {
-        val routingContext = routingContextWithHeaders(
-            headers = Headers.build {
-                append(NAV_CALL_ID_HEADER, callId)
-                append(HttpHeaders.Authorization, bearerHeader(token))
-            }
-        )
+        val routingContext =
+            routingContextWithHeaders(
+                headers =
+                    Headers.build {
+                        append(NAV_CALL_ID_HEADER, callId)
+                        append(HttpHeaders.Authorization, bearerHeader(token))
+                    },
+            )
         var blockCalled = false
 
         coEvery {
@@ -256,7 +272,7 @@ class TilgangskontrollExtensionsTest {
                 routingContext.checkPersonAndSyfoTilgang(
                     action = action,
                     personIdent = personIdent,
-                    tilgangskontrollClient = tilgangskontrollClient
+                    tilgangskontrollClient = tilgangskontrollClient,
                 ) {
                     blockCalled = true
                 }
@@ -268,18 +284,20 @@ class TilgangskontrollExtensionsTest {
 
     @Test
     fun `explicit personIdent - throws illegal argument when authorization header is missing`() {
-        val routingContext = routingContextWithHeaders(
-            headers = Headers.build {
-                append(NAV_CALL_ID_HEADER, callId)
-            }
-        )
+        val routingContext =
+            routingContextWithHeaders(
+                headers =
+                    Headers.build {
+                        append(NAV_CALL_ID_HEADER, callId)
+                    },
+            )
 
         Assertions.assertThrows(IllegalArgumentException::class.java) {
             runBlocking {
                 routingContext.checkPersonAndSyfoTilgang(
                     action = action,
                     personIdent = personIdent,
-                    tilgangskontrollClient = tilgangskontrollClient
+                    tilgangskontrollClient = tilgangskontrollClient,
                 ) {}
             }
         }

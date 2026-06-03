@@ -20,31 +20,32 @@ internal suspend fun texasOboToken(
     httpClient: HttpClient,
     identityProvider: TexasIdentityProvider,
     targetClientId: String,
-    token: String
+    token: String,
 ): String? =
     try {
-        val response = httpClient.post(tokenExchangeEndpoint) {
-            accept(ContentType.Application.Json)
-            contentType(ContentType.Application.Json)
-            setBody(
-                TexasTokenExchangeRequest(
-                    identity_provider = identityProvider.value,
-                    target = identityProvider.formatTarget(targetClientId),
-                    user_token = token
+        val response =
+            httpClient.post(tokenExchangeEndpoint) {
+                accept(ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
+                setBody(
+                    TexasTokenExchangeRequest(
+                        identity_provider = identityProvider.value,
+                        target = identityProvider.formatTarget(targetClientId),
+                        user_token = token,
+                    ),
                 )
-            )
-        }
+            }
         response.body<TexasTokenResponse>().access_token
     } catch (e: ClientRequestException) {
         log.error(
             "Client error while exchanging OBO token via Texas (${identityProvider.value}): statusCode=${e.response.status.value}",
-            e
+            e,
         )
         null
     } catch (e: ServerResponseException) {
         log.error(
             "Server error while exchanging OBO token via Texas (${identityProvider.value}): statusCode=${e.response.status.value}",
-            e
+            e,
         )
         null
     }
@@ -52,30 +53,31 @@ internal suspend fun texasOboToken(
 internal suspend fun texasSystemToken(
     httpClient: HttpClient,
     identityProvider: TexasIdentityProvider,
-    targetClientId: String
+    targetClientId: String,
 ): String? =
     try {
-        val response = httpClient.post(tokenEndpoint) {
-            accept(ContentType.Application.Json)
-            contentType(ContentType.Application.Json)
-            setBody(
-                TexasTokenRequest(
-                    identity_provider = identityProvider.value,
-                    target = identityProvider.formatTarget(targetClientId)
+        val response =
+            httpClient.post(tokenEndpoint) {
+                accept(ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
+                setBody(
+                    TexasTokenRequest(
+                        identity_provider = identityProvider.value,
+                        target = identityProvider.formatTarget(targetClientId),
+                    ),
                 )
-            )
-        }
+            }
         response.body<TexasTokenResponse>().access_token
     } catch (e: ClientRequestException) {
         log.error(
             "Client error while acquiring system token via Texas (${identityProvider.value}): statusCode=${e.response.status.value}",
-            e
+            e,
         )
         null
     } catch (e: ServerResponseException) {
         log.error(
             "Server error while acquiring system token via Texas (${identityProvider.value}): statusCode=${e.response.status.value}",
-            e
+            e,
         )
         null
     }

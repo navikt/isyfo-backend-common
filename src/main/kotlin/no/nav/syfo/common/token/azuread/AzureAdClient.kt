@@ -31,8 +31,9 @@ import java.util.concurrent.ConcurrentHashMap
  */
 public class AzureAdClient(
     private val config: AzureAdClientConfig = AzureAdClientConfig.fromEnv(),
-    private val httpClient: HttpClient = proxyHttpClient()
-) : OboTokenProvider, SystemTokenProvider {
+    private val httpClient: HttpClient = proxyHttpClient(),
+) : OboTokenProvider,
+    SystemTokenProvider {
     /**
      * Exchanges the caller's token for an on-behalf-of token scoped to [targetClientId].
      *
@@ -40,17 +41,21 @@ public class AzureAdClient(
      * @param token The caller's bearer token to exchange.
      * @return The raw access token string, or `null` if the exchange failed.
      */
-    override suspend fun getOnBehalfOfToken(targetClientId: String, token: String): String? = getAccessToken(
-        Parameters.build {
-            append("client_id", config.appClientId)
-            append("client_secret", config.appClientSecret)
-            append("client_assertion_type", "urn:ietf:params:oauth:grant-type:jwt-bearer")
-            append("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer")
-            append("assertion", token)
-            append("scope", "api://$targetClientId/.default")
-            append("requested_token_use", "on_behalf_of")
-        }
-    )?.toAzureAdToken()?.accessToken
+    override suspend fun getOnBehalfOfToken(
+        targetClientId: String,
+        token: String,
+    ): String? =
+        getAccessToken(
+            Parameters.build {
+                append("client_id", config.appClientId)
+                append("client_secret", config.appClientSecret)
+                append("client_assertion_type", "urn:ietf:params:oauth:grant-type:jwt-bearer")
+                append("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer")
+                append("assertion", token)
+                append("scope", "api://$targetClientId/.default")
+                append("requested_token_use", "on_behalf_of")
+            },
+        )?.toAzureAdToken()?.accessToken
 
     /**
      * Acquires a machine-to-machine token scoped to [targetClientId] using client credentials.
@@ -69,42 +74,42 @@ public class AzureAdClient(
                 cachedToken
             } else {
                 COUNT_CALL_AZUREAD_SYSTEM_TOKEN_CACHE_MISS.increment()
-                val azureAdTokenResponse = getAccessToken(
-                    Parameters.build {
-                        append("client_id", config.appClientId)
-                        append("client_secret", config.appClientSecret)
-                        append("grant_type", "client_credentials")
-                        append("scope", "api://$targetClientId/.default")
-                    }
-                )
+                val azureAdTokenResponse =
+                    getAccessToken(
+                        Parameters.build {
+                            append("client_id", config.appClientId)
+                            append("client_secret", config.appClientSecret)
+                            append("grant_type", "client_credentials")
+                            append("scope", "api://$targetClientId/.default")
+                        },
+                    )
                 azureAdTokenResponse?.let { token ->
                     token.toAzureAdToken().also {
                         cache[cacheKey] = it
                     }
                 }
             }
-            )?.accessToken
+        )?.accessToken
     }
 
-    private suspend fun getAccessToken(
-        formParameters: Parameters
-    ): AzureAdTokenResponse? =
+    private suspend fun getAccessToken(formParameters: Parameters): AzureAdTokenResponse? =
         try {
-            val response: HttpResponse = httpClient.post(config.openidConfigTokenEndpoint) {
-                accept(ContentType.Application.Json)
-                setBody(FormDataContent(formParameters))
-            }
+            val response: HttpResponse =
+                httpClient.post(config.openidConfigTokenEndpoint) {
+                    accept(ContentType.Application.Json)
+                    setBody(FormDataContent(formParameters))
+                }
             response.body<AzureAdTokenResponse>()
         } catch (e: ClientRequestException) {
             log.error(
                 "Client error while requesting AzureAD access token with statusCode=${e.response.status.value}",
-                e
+                e,
             )
             null
         } catch (e: ServerResponseException) {
             log.error(
                 "Server error while requesting AzureAD access token with statusCode=${e.response.status.value}",
-                e
+                e,
             )
             null
         }

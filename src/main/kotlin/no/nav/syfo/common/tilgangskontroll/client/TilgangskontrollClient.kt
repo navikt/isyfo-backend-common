@@ -29,28 +29,34 @@ import org.slf4j.LoggerFactory
 public class TilgangskontrollClient(
     private val oboTokenProvider: OboTokenProvider,
     private val clientConfig: ClientConfig,
-    private val httpClient: HttpClient = defaultHttpClient()
+    private val httpClient: HttpClient = defaultHttpClient(),
 ) {
     private val tilgangskontrollPersonUrl = "${clientConfig.baseUrl}$TILGANGSKONTROLL_PERSON_PATH"
     private val tilgangskontrollBrukereUrl = "${clientConfig.baseUrl}$TILGANGSKONTROLL_BRUKERE_PATH"
 
-    private suspend fun getTilgang(callId: String, personIdent: String, token: String): Tilgang? {
-        val oboToken = oboTokenProvider.getOnBehalfOfToken(
-            targetClientId = clientConfig.clientId,
-            token = token
-        )
-            ?: error(
-                "Failed to get tiltang for user: Failed to get OBO token for istilgangskontroll from " +
-                    oboTokenProvider::class.simpleName
+    private suspend fun getTilgang(
+        callId: String,
+        personIdent: String,
+        token: String,
+    ): Tilgang? {
+        val oboToken =
+            oboTokenProvider.getOnBehalfOfToken(
+                targetClientId = clientConfig.clientId,
+                token = token,
             )
+                ?: error(
+                    "Failed to get tiltang for user: Failed to get OBO token for istilgangskontroll from " +
+                        oboTokenProvider::class.simpleName,
+                )
 
         return try {
-            val tilgangResponse = httpClient.get(tilgangskontrollPersonUrl) {
-                header(HttpHeaders.Authorization, bearerHeader(oboToken))
-                header(NAV_PERSONIDENT_HEADER, personIdent)
-                header(NAV_CALL_ID_HEADER, callId)
-                accept(ContentType.Application.Json)
-            }
+            val tilgangResponse =
+                httpClient.get(tilgangskontrollPersonUrl) {
+                    header(HttpHeaders.Authorization, bearerHeader(oboToken))
+                    header(NAV_PERSONIDENT_HEADER, personIdent)
+                    header(NAV_CALL_ID_HEADER, callId)
+                    accept(ContentType.Application.Json)
+                }
             COUNT_CALL_TILGANGSKONTROLL_PERSON_SUCCESS.increment()
             tilgangResponse.body<Tilgang>()
         } catch (e: ResponseException) {
@@ -66,12 +72,12 @@ public class TilgangskontrollClient(
 
     private fun handleUnexpectedResponseException(
         response: HttpResponse,
-        callId: String
+        callId: String,
     ) {
         log.error(
             "Error while requesting access to person from istilgangskontroll: statusCode={}, callId={}",
             response.status.value,
-            callId
+            callId,
         )
     }
 
@@ -83,9 +89,11 @@ public class TilgangskontrollClient(
      * @param personIdent The person's national identity number (fødselsnummer).
      * @param token The user's incoming Bearer token (without the "Bearer " prefix).
      */
-    public suspend fun hasAccess(callId: String, personIdent: String, token: String): Boolean {
-        return getTilgang(callId, personIdent, token)?.erGodkjent ?: false
-    }
+    public suspend fun hasAccess(
+        callId: String,
+        personIdent: String,
+        token: String,
+    ): Boolean = getTilgang(callId, personIdent, token)?.erGodkjent ?: false
 
     /**
      * Returns true if the user has access to the given person per populasjonstilgang, and the user has
@@ -97,11 +105,14 @@ public class TilgangskontrollClient(
      * @param personIdent The national identity number (fødselsnummer) of person to check if user has access to.
      * @param token The user's incoming Bearer token (without the "Bearer " prefix).
      */
-    public suspend fun hasWriteAccess(callId: String, personIdent: String, token: String): Boolean {
-        return getTilgang(callId, personIdent, token)?.let {
+    public suspend fun hasWriteAccess(
+        callId: String,
+        personIdent: String,
+        token: String,
+    ): Boolean =
+        getTilgang(callId, personIdent, token)?.let {
             it.erGodkjent && it.fullTilgang
         } ?: false
-    }
 
     /**
      * Returns the subset of a list of [personIdenter] that the user has access to.
@@ -115,21 +126,23 @@ public class TilgangskontrollClient(
     public suspend fun filterPersonsUserHasAccessTo(
         personIdenter: List<String>,
         token: String,
-        callId: String
+        callId: String,
     ): List<String>? {
-        val oboToken = oboTokenProvider.getOnBehalfOfToken(
-            targetClientId = clientConfig.clientId,
-            token = token
-        ) ?: throw RuntimeException("Failed to request access to list of persons: Failed to get OBO token")
+        val oboToken =
+            oboTokenProvider.getOnBehalfOfToken(
+                targetClientId = clientConfig.clientId,
+                token = token,
+            ) ?: throw RuntimeException("Failed to request access to list of persons: Failed to get OBO token")
 
         return try {
-            val response: HttpResponse = httpClient.post(tilgangskontrollBrukereUrl) {
-                header(HttpHeaders.Authorization, bearerHeader(oboToken))
-                header(NAV_CALL_ID_HEADER, callId)
-                accept(ContentType.Application.Json)
-                header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-                setBody(personIdenter)
-            }
+            val response: HttpResponse =
+                httpClient.post(tilgangskontrollBrukereUrl) {
+                    header(HttpHeaders.Authorization, bearerHeader(oboToken))
+                    header(NAV_CALL_ID_HEADER, callId)
+                    accept(ContentType.Application.Json)
+                    header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                    setBody(personIdenter)
+                }
             response.body<List<String>>()
         } catch (e: ClientRequestException) {
             if (e.response.status == HttpStatusCode.Forbidden) {

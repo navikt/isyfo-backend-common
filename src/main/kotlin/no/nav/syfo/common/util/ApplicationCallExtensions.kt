@@ -17,8 +17,7 @@ public val ApplicationCall.bearerToken: String?
 
 /** Extracts the Bearer token from the `Authorization` header, stripping the `Bearer ` prefix.
  * @throws [IllegalArgumentException] if the header is absent. */
-public fun ApplicationCall.bearerTokenOrThrow(): String =
-    requireNotNull(bearerToken) { "Authorization header is missing." }
+public fun ApplicationCall.bearerTokenOrThrow(): String = requireNotNull(bearerToken) { "Authorization header is missing." }
 
 /** Extracts the Bearer token from the `Authorization` header, stripping the `Bearer ` prefix.
  * @param action Short description of the action being performed, used in error messages.
@@ -29,14 +28,14 @@ public fun ApplicationCall.bearerTokenOrThrow(action: String): String =
 /** Returns the NAVident (user's employee ID) from the `NAVident` private claim in the incoming Bearer token,
  * or null if there is no Authorization header or if the claim is missing. */
 public val ApplicationCall.navIdent: String?
-    get() = bearerToken?.let {
-        JWT.decode(it).claims[JWT_CLAIM_NAVIDENT]?.asString()
-    }
+    get() =
+        bearerToken?.let {
+            JWT.decode(it).claims[JWT_CLAIM_NAVIDENT]?.asString()
+        }
 
 /** Returns the NAVident (user's employee ID) from the `NAVident` private claim in the incoming Bearer token.
  * @throws [IllegalArgumentException] if there is no Authorization header or if the claim is missing. */
-public fun ApplicationCall.navIdentOrThrow(): String =
-    requireNotNull(navIdent) { "Missing token or $JWT_CLAIM_NAVIDENT claim in token." }
+public fun ApplicationCall.navIdentOrThrow(): String = requireNotNull(navIdent) { "Missing token or $JWT_CLAIM_NAVIDENT claim in token." }
 
 /** Returns the NAVident (user's employee ID) from the `NAVident` private claim in the incoming Bearer token.
  * @param action Short description of the action being performed, used in error messages.
@@ -54,8 +53,7 @@ public val ApplicationCall.personIdent: String?
  * The header is used to carry the Norwegian national identity number (fødselsnummer/D-nummer)
  * of the citizen a request concerns.
  * @throws [IllegalArgumentException] if the header is absent. */
-public fun ApplicationCall.personIdentOrThrow(): String =
-    requireNotNull(personIdent) { "No $NAV_PERSONIDENT_HEADER header supplied." }
+public fun ApplicationCall.personIdentOrThrow(): String = requireNotNull(personIdent) { "No $NAV_PERSONIDENT_HEADER header supplied." }
 
 /** Returns the value of the `nav-personident` request header.
  * The header is used to carry the Norwegian national identity number (fødselsnummer/D-nummer)
@@ -69,12 +67,14 @@ public fun ApplicationCall.personIdentOrThrow(action: String): String =
  * across services. If header is missing returns null and logs a warning.
  * Consider using package io.ktor.server.plugins.callid plugin version instead if app installs it. */
 public val ApplicationCall.callId: String?
-    get() = this.request.headers[NAV_CALL_ID_HEADER]
-        ?: null.also { log.warn("Call id header missing in request.") }
+    get() =
+        this.request.headers[NAV_CALL_ID_HEADER]
+            ?: null.also { log.warn("Call id header missing in request.") }
 
 /** Returns the `azp` (authorized party) claim from the incoming Bearer token.
  * Returns null and logs a warning if the Authorization header or the claim is absent. */
 public val ApplicationCall.consumerClientId: String?
-    get() = bearerToken?.let {
-        JWT.decode(it).claims[JWT_CLAIM_AZP]?.asString()
-    } ?: null.also { log.warn("Missing Authorization header or $JWT_CLAIM_AZP claim in bearer token.") }
+    get() =
+        bearerToken?.let {
+            JWT.decode(it).claims[JWT_CLAIM_AZP]?.asString()
+        } ?: null.also { log.warn("Missing Authorization header or $JWT_CLAIM_AZP claim in bearer token.") }

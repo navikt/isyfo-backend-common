@@ -27,7 +27,7 @@ public suspend fun RoutingContext.checkPersonAndSyfoTilgang(
     action: String,
     tilgangskontrollClient: TilgangskontrollClient,
     requiresWriteAccess: Boolean = false,
-    block: suspend (String) -> Unit
+    block: suspend (String) -> Unit,
 ) {
     val personIdent = call.personIdentOrThrow(action)
 
@@ -36,7 +36,7 @@ public suspend fun RoutingContext.checkPersonAndSyfoTilgang(
         personIdent = personIdent,
         tilgangskontrollClient = tilgangskontrollClient,
         requiresWriteAccess = requiresWriteAccess,
-        block = block
+        block = block,
     )
 }
 
@@ -63,24 +63,25 @@ public suspend fun RoutingContext.checkPersonAndSyfoTilgang(
     personIdent: String,
     tilgangskontrollClient: TilgangskontrollClient,
     requiresWriteAccess: Boolean = false,
-    block: suspend (String) -> Unit
+    block: suspend (String) -> Unit,
 ) {
     val token = call.bearerTokenOrThrow(action)
     val callId = call.callId ?: "unknown"
 
-    val hasAccess = if (requiresWriteAccess) {
-        tilgangskontrollClient.hasWriteAccess(
-            callId = callId,
-            personIdent = personIdent,
-            token = token
-        )
-    } else {
-        tilgangskontrollClient.hasAccess(
-            callId = callId,
-            personIdent = personIdent,
-            token = token
-        )
-    }
+    val hasAccess =
+        if (requiresWriteAccess) {
+            tilgangskontrollClient.hasWriteAccess(
+                callId = callId,
+                personIdent = personIdent,
+                token = token,
+            )
+        } else {
+            tilgangskontrollClient.hasAccess(
+                callId = callId,
+                personIdent = personIdent,
+                token = token,
+            )
+        }
 
     if (!hasAccess) {
         throw TilgangDeniedException(action = action)
@@ -102,7 +103,7 @@ public suspend fun RoutingContext.checkPersonAndSyfoTilgang(
 public suspend fun RoutingContext.filterPersonsUserHasAccessTo(
     action: String,
     personIdenter: List<String>,
-    tilgangskontrollClient: TilgangskontrollClient
+    tilgangskontrollClient: TilgangskontrollClient,
 ): List<String>? {
     val token = call.bearerTokenOrThrow(action)
     val callId = call.callId ?: "unknown"

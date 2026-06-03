@@ -10,10 +10,10 @@ package no.nav.syfo.common.auth
 public data class JwtIssuer(
     val acceptedAudienceList: List<String>,
     val jwtIssuerType: JwtIssuerType,
-    val wellKnown: WellKnown
+    val wellKnown: WellKnown,
 )
 
 /** Named identifiers for supported JWT issuers. Used as Ktor authentication provider names. */
 public enum class JwtIssuerType {
-    INTERNAL_AZUREAD
+    INTERNAL_AZUREAD,
 }
