@@ -2,7 +2,7 @@ group = "no.nav.syfo"
 version = "0.0.41"
 description = "Shared Kotlin library for checking veileder access via istilgangskontroll"
 
-val jacksonDataTypeVersion = "2.21.4"
+val jacksonVersion = "2.21.4"
 val ktorVersion = "3.5.0"
 val logbackVersion = "1.5.34"
 val micrometerVersion = "1.16.5"
@@ -27,8 +27,10 @@ dependencies {
     // Exposed in public API — consumers need these on their compile classpath
     api("io.ktor:ktor-client-core:$ktorVersion")
     api("io.ktor:ktor-server-auth-jwt:$ktorVersion")
-    api("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonDataTypeVersion")
-    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonDataTypeVersion")
+    // BOM keeps all Jackson artifacts (incl. transitive ones) on a single aligned version
+    api(platform("com.fasterxml.jackson:jackson-bom:$jacksonVersion"))
+    api("com.fasterxml.jackson.module:jackson-module-kotlin")
+    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
     // Internal — encapsulated behind library functions, not referenced directly by consumers
     implementation("io.micrometer:micrometer-core:$micrometerVersion")
@@ -38,6 +40,10 @@ dependencies {
 
     // Logging facade only; consuming apps own the runtime binding (e.g. logback-classic)
     implementation("org.slf4j:slf4j-api:$slf4jVersion")
+
+    // Test fixtures (published as a separate -test-fixtures artifact); version supplied by the Jackson BOM
+    testFixturesImplementation(platform("com.fasterxml.jackson:jackson-bom:$jacksonVersion"))
+    testFixturesImplementation("com.fasterxml.jackson.core:jackson-annotations")
 
     // Tests
     testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
