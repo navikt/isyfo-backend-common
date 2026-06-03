@@ -27,11 +27,11 @@ dependencies {
     // Exposed in public API — consumers need these on their compile classpath
     api("io.ktor:ktor-client-core:$ktorVersion")
     api("io.ktor:ktor-server-auth-jwt:$ktorVersion")
-    api("io.micrometer:micrometer-core:$micrometerVersion")
     api("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonDataTypeVersion")
     api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonDataTypeVersion")
 
     // Internal — encapsulated behind library functions, not referenced directly by consumers
+    implementation("io.micrometer:micrometer-core:$micrometerVersion")
     implementation("io.ktor:ktor-client-apache5:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
