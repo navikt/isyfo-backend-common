@@ -14,7 +14,7 @@ import org.apache.hc.client5.http.impl.routing.SystemDefaultRoutePlanner
 import java.net.ProxySelector
 
 /**
- * Base [HttpClient] configuration shared by all HTTP clients in the isyfo ecosystem.
+ * Base common [HttpClient] configuration to use across iSyfo backend services.
  *
  * Installs:
  * - JSON content negotiation via Jackson with [applyCommonJacksonConfig]
@@ -49,18 +49,19 @@ internal val proxyConfig: HttpClientConfig<Apache5EngineConfig>.() -> Unit = {
 }
 
 /**
- * Creates an [HttpClient] for intra-cluster calls (no proxy).
+ * Creates a [HttpClient] for intra-cluster calls (no proxy).
  *
  * Use this for calls to other services within the same cluster, such as PDL, dokarkiv, or istilgangskontroll.
- * Applies [commonConfig].
+ * Applies [commonConfig] for iSyfo.
  */
 public fun defaultHttpClient(): HttpClient = HttpClient(Apache5, commonConfig)
 
 /**
- * Creates an [HttpClient] for internet-bound calls, routed through the Nav outbound proxy.
+ * Creates an [HttpClient] with additional proxy config needed for internet-bound calls,
+ * routed through the Nav outbound proxy.
  *
  * Use this for calls that need to reach external endpoints, such as the Azure AD token endpoint
  * or the OpenID Connect well-known configuration URL.
- * Applies [commonConfig] plus proxy routing via [ProxySelector].
+ * Applies [commonConfig] for iSyfo plus proxy routing via [ProxySelector].
  */
 public fun proxyHttpClient(): HttpClient = HttpClient(Apache5, proxyConfig)

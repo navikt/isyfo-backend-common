@@ -10,7 +10,7 @@ Token methods accept `targetClientId` in `<cluster>.<namespace>.<app>` format �
 
 `no.nav.syfo.common.token.texas.EntraIdClient`
 
-Uses the Nais token exchange sidecar (Texas) — no client credentials needed in the app. Texas handles caching, renewal, and communication with Entra ID.
+Uses the Nais token exchange sidecar (Texas) — no client credentials needed in the constructor. Texas handles caching, renewal, and communication with Entra ID.
 
 ### Setup
 
@@ -36,9 +36,7 @@ val token = entraIdClient.getSystemToken(
 )
 ```
 
-### Migrating from AzureAdClient
-
-Switching to `EntraIdClient` lets you simplify consuming apps:
+### Migrating from AzureAdClient to EntraIdClient (Texas)
 
 - **App code**: Remove the `AzureEnvironment` config and all reading of `AZURE_APP_CLIENT_ID`, `AZURE_APP_CLIENT_SECRET`, `AZURE_APP_WELL_KNOWN_URL`. Replace `AzureAdClient(azureEnvironment)` with `EntraIdClient()` — no arguments needed.
 - **Naiserator**: Remove `outbound.external: login.microsoftonline.com` — the app no longer calls Azure AD directly. Keep `azure.application.enabled: true`; the Texas sidecar still uses the app's Azure AD registration and injects `NAIS_TOKEN_EXCHANGE_ENDPOINT` and `NAIS_TOKEN_ENDPOINT` automatically.

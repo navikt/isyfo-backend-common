@@ -1,24 +1,29 @@
 # isyfo-backend-common
 
-Shared Kotlin/JVM utility library for isyfo backend services. Intended to grow with shared backend utilities over time.
-
-Some helpers are for Ktor apps, while non-Ktor apps can use parts of the library like `EntraIdClient` and `TilgangskontrollClient`.
+Shared Kotlin utility library for iSyfo backend Ktor services. Intended to grow with shared backend utilities over time.
 
 ## What it provides
 
 ### Token providers
-- `EntraIdClient` — acquires OBO and system tokens via the Nais token exchange sidecar (Texas)
-- `AzureAdClient` — acquires OBO and system tokens directly from Azure AD
+- `AzureAdClient` — acquires OBO and system tokens with direct calls to Entra Id (formerly Azure AD)
+- `EntraIdClient` — acquires OBO and system tokens from Entra ID via the Nais token exchange sidecar (Texas)
 - Both implement `OboTokenProvider` and `SystemTokenProvider`
 
-### Veileder access control
+### Tilgangskontroll
 - `TilgangskontrollClient` — read/write access checks against `istilgangskontroll`
-- Ktor convenience helpers such as `checkVeilederTilgangToPerson(...)`
+- Ktor `RoutingContext` extension helpers such as `checkPersonAndSyfoTilgang(...)`
+
+### Ktor helpers for accessing request data
+`ApplicationCall` extension properties and functions for extracting common request data: Bearer token, `NAVident` and `azp` JWT claims, the `nav-personident` header, and the `Nav-Call-Id` tracing header.
+
+### Common http client configuration
+`defaultHttpClient()` and `proxyHttpClient()` provide pre-configured Ktor `HttpClient` instances with Jackson content negotiation, automatic retry on non-4xx errors, and proxy support for internet-bound calls.
+
+### Common Jackson object mapper
+`configuredJacksonMapper()` and `applyCommonJacksonConfig()` provide a shared Jackson `ObjectMapper` configured with Java 8 time support, ISO-8601 date serialization, and unknown-property tolerance.
 
 ### JWT authentication
-- `installJwtAuthentication()` — Ktor plugin for validating incoming Azure AD JWTs
-- `getWellKnown()` — fetches the OpenID Connect discovery document at startup
-- `JwtIssuer` / `JwtIssuerType` — configuration types for JWT issuers
+`installJwtAuthentication()` is a Ktor plugin that validates incoming JWTs, configured via `JwtIssuer` / `JwtIssuerType` and the OpenID Connect discovery document fetched by `getWellKnown()` at startup.
 
 ## Adding the dependency in consumer apps
 
