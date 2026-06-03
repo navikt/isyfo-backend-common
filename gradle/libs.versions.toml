@@ -1,0 +1,44 @@
+[versions]
+jackson = "2.21.4"
+ktor = "3.5.0"
+logback = "1.5.34"
+micrometer = "1.16.5"
+mockk = "1.14.11"
+slf4j = "2.0.18"
+
+# Plugin versions
+kotlin = "2.3.21"
+ktlint = "14.2.0"
+testLogger = "4.0.0"
+versionsPlugin = "0.54.0"
+
+[libraries]
+# Ktor
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-server-auth-jwt = { module = "io.ktor:ktor-server-auth-jwt", version.ref = "ktor" }
+ktor-client-apache5 = { module = "io.ktor:ktor-client-apache5", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization-jackson = { module = "io.ktor:ktor-serialization-jackson", version.ref = "ktor" }
+ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
+
+# Jackson (module versions resolved via the BOM)
+jackson-bom = { module = "com.fasterxml.jackson:jackson-bom", version.ref = "jackson" }
+jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin" }
+jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" }
+jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations" }
+
+# Metrics & logging
+micrometer-core = { module = "io.micrometer:micrometer-core", version.ref = "micrometer" }
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+
+# Test
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+test-logger = { id = "com.adarshr.test-logger", version.ref = "testLogger" }
+versions = { id = "com.github.ben-manes.versions", version.ref = "versionsPlugin" }
+
