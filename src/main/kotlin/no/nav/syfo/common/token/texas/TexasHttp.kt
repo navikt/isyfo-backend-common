@@ -11,7 +11,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import org.slf4j.LoggerFactory
 
-private val log = LoggerFactory.getLogger("no.nav.syfo.common.token.texas.TexasHttp")
+private val log = LoggerFactory.getLogger("no.nav.syfo.common.token.texas")
 
 private val tokenExchangeEndpoint: String get() = System.getenv("NAIS_TOKEN_EXCHANGE_ENDPOINT")
 private val tokenEndpoint: String get() = System.getenv("NAIS_TOKEN_ENDPOINT")

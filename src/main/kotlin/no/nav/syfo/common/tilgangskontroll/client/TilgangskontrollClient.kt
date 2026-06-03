@@ -1,19 +1,11 @@
 package no.nav.syfo.common.tilgangskontroll.client
 
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.plugins.ClientRequestException
-import io.ktor.client.plugins.ResponseException
-import io.ktor.client.plugins.ServerResponseException
-import io.ktor.client.request.accept
-import io.ktor.client.request.get
-import io.ktor.client.request.header
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpStatusCode
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.plugins.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import no.nav.syfo.common.http.defaultHttpClient
 import no.nav.syfo.common.token.OboTokenProvider
 import no.nav.syfo.common.util.ClientConfig
@@ -23,8 +15,8 @@ import no.nav.syfo.common.util.bearerHeader
 import org.slf4j.LoggerFactory
 
 /**
- * Client for istilgangskontroll — the isyfo service that checks what access a veileder or other user has to a given
- * citizen person, and if the user has read or write access given their Modia Syfo fagtilgang.
+ * Client for `istilgangskontroll` — the isyfo service that checks if a veileder or other user has access to a given
+ * citizen person, and what level of access the user has to Modia Syfo given their Modia Syfo fagtilgang.
  *
  * Uses an [OboTokenProvider] to exchange the user's incoming token for an OBO token scoped to istilgangskontroll
  * before making requests.
@@ -46,7 +38,11 @@ public class TilgangskontrollClient(
         val oboToken = oboTokenProvider.getOnBehalfOfToken(
             targetClientId = clientConfig.clientId,
             token = token
-        ) ?: throw RuntimeException("Failed to request access to Person: Failed to get OBO token")
+        )
+            ?: error(
+                "Failed to get tiltang for user: Failed to get OBO token for istilgangskontroll from " +
+                    oboTokenProvider::class.simpleName
+            )
 
         return try {
             val tilgangResponse = httpClient.get(tilgangskontrollPersonUrl) {
@@ -80,7 +76,8 @@ public class TilgangskontrollClient(
     }
 
     /**
-     * Returns true if the user has read access to the given person.
+     * Returns true if the user has access to the given person per populasjonstilgang, and the user has at least
+     * read access given the user's Modia Syfo fagtilgang.
      *
      * @param callId Forwarded to istilgangskontroll as the `Nav-Call-Id` request header for tracing across services.
      * @param personIdent The person's national identity number (fødselsnummer).
@@ -91,8 +88,10 @@ public class TilgangskontrollClient(
     }
 
     /**
-     * Returns true if the user has write access (fullTilgang) and access to the given citizen person.
-     * Returns false if the user does not have access to the person, or if the user does not have fullTilgang.
+     * Returns true if the user has access to the given person per populasjonstilgang, and the user has
+     * write access (fullTilgang) given the user's Modia Syfo fagtilgang.
+     *
+     * Returns false if the user does not have access to the person, or if the user does not have write access.
      *
      * @param callId Forwarded to istilgangskontroll as the `Nav-Call-Id` request header for tracing across services.
      * @param personIdent The national identity number (fødselsnummer) of person to check if user has access to.
@@ -105,13 +104,15 @@ public class TilgangskontrollClient(
     }
 
     /**
-     * Returns the subset of the given [personIdenter] that the user has access to.
-     * Returns null on error or if access is forbidden entirely.
+     * Returns the subset of a list of [personIdenter] that the user has access to.
+     * Returns null on error or if istilagngskontroll responds with status forbidden, and returns and empty
+     * list if user has access to none of the persons or if user does not have at least read access per Syfo Modia
+     * fagtilgang.
      *
      * @param personIdenter List of national identity numbers (fødselsnummer) to check if user has access to.
      * @param token The user's incoming Bearer token (without the "Bearer " prefix).
      */
-    public suspend fun personsUserHasAccessTo(
+    public suspend fun filterPersonsUserHasAccessTo(
         personIdenter: List<String>,
         token: String,
         callId: String
