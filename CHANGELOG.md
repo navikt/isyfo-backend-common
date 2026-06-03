@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.0.39]
+
+### Added
+- `bearerTokenOrThrow()` and `bearerTokenOrThrow(action: String)` functions — throwing variants of `bearerToken`, with an optional `action` context included in the error message.
+- `navIdentOrThrow()` and `navIdentOrThrow(action: String)` functions — throwing variants of `navIdent`, with an optional `action` context included in the error message.
+- `personIdentOrThrow()` and `personIdentOrThrow(action: String)` functions — throwing variants of `personIdent`, with an optional `action` context included in the error message.
+- `RoutingContext.filterPersonsUserHasAccessTo` extension function — convenience helper that reads the bearer token and call id from the request and delegates to `TilgangskontrollClient.filterPersonsUserHasAccessTo`.
+
+### Changed
+- `bearerTokenOrNull` renamed to `bearerToken` (nullable `String?`). The old non-nullable `bearerToken` property is replaced by `bearerTokenOrThrow()`.
+- `navIdentOrNull` renamed to `navIdent` (nullable `String?`). The old non-nullable `navIdent` property is replaced by `navIdentOrThrow()`.
+- `personIdentOrNull` renamed to `personIdent` (nullable `String?`). The old non-nullable `personIdent` property is replaced by `personIdentOrThrow()`.
+- `callId` now returns `String?` instead of `String`. Previously returned `"unknown"` when the header was absent; now returns `null` and logs a warning.
+- `consumerClientId` now returns `String?` instead of `String`. Previously returned `"unknown"` when the claim was absent; now returns `null` and logs a warning.
+- `checkPersonAndSyfoTilgang` block handler now receives the validated `personIdent: String` as a parameter (was `suspend () -> Unit`, now `suspend (String) -> Unit`).
+- `TilgangskontrollClient.personsUserHasAccessTo` renamed to `filterPersonsUserHasAccessTo`.
+- `TilgangDeniedException` error message now reads `"Failed to $action: Access denied – User does not have required persontilgang or fagtilgang."` instead of `"Denied NAVIdent access to personident: $action"`.
+
 ## [0.0.38]
 
 ### Changed
