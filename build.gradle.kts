@@ -2,7 +2,7 @@ group = "no.nav.syfo"
 version = "0.0.42"
 description = "Shared Kotlin utility library for iSyfo backend Ktor services."
 
-val jacksonVersion = "2.21.4"
+val jacksonVersion = "2.22.0"
 val ktorVersion = "3.5.0"
 val logbackVersion = "1.5.34"
 val micrometerVersion = "1.16.5"
@@ -10,7 +10,7 @@ val mockkVersion = "1.14.11"
 val slf4jVersion = "2.0.18"
 
 plugins {
-    kotlin("jvm") version "2.3.21"
+    kotlin("jvm") version "2.4.0"
     `java-library`
     `java-test-fixtures`
     `maven-publish`
