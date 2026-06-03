@@ -1,5 +1,5 @@
 group = "no.nav.syfo"
-version = "0.0.41"
+version = "0.0.42"
 description = "Shared Kotlin utility library for iSyfo backend Ktor services."
 
 val jacksonVersion = "2.21.4"

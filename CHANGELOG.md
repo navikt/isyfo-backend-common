@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.0.42]
+
+Maintenance: Dependency cleanup — manage Jackson via `jackson-bom`, scope `micrometer-core` to `implementation`, and drop `logstash-logback-encoder` in favour of the SLF4J fluent API for structured logging.
+
 ## [0.0.41]
 
 Maintenance: Improve workflows consistency.
