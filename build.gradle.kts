@@ -1,5 +1,5 @@
 group = "no.nav.syfo"
-version = "0.0.40"
+version = "0.0.41"
 description = "Shared Kotlin library for checking veileder access via istilgangskontroll"
 
 val jacksonDataTypeVersion = "2.21.4"
