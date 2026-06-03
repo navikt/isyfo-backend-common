@@ -10,7 +10,6 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.common.http.commonConfig
-import no.nav.syfo.common.testhelper.receiveBody
 import no.nav.syfo.common.testhelper.respond
 import no.nav.syfo.common.token.OboTokenProvider
 import no.nav.syfo.common.util.ClientConfig
@@ -20,7 +19,6 @@ import no.nav.syfo.common.util.bearerHeader
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -145,60 +143,6 @@ class TilgangskontrollClientTest {
                 client.hasWriteAccess(callId, personIdent, token)
             }
         }
-    }
-
-    @Test
-    fun `personsUserHasAccessTo returns filtered personIdent list and sends expected payload`() {
-        val requestedPersonidenter = listOf(personIdent, "10987654321")
-        lateinit var authorizationHeader: String
-        lateinit var callIdHeader: String
-        lateinit var requestBody: List<String>
-
-        val httpClient = HttpClient(MockEngine) {
-            commonConfig()
-            engine {
-                addHandler { request ->
-                    authorizationHeader = request.headers[HttpHeaders.Authorization].orEmpty()
-                    callIdHeader = request.headers[NAV_CALL_ID_HEADER].orEmpty()
-                    requestBody = request.receiveBody()
-                    respond(listOf(personIdent))
-                }
-            }
-        }
-
-        val client = TilgangskontrollClient(
-            oboTokenProvider = oboTokenProvider,
-            clientConfig = clientConfig,
-            httpClient = httpClient
-        )
-
-        val tilgang = runBlocking {
-            client.personsUserHasAccessTo(
-                personIdenter = requestedPersonidenter,
-                token = token,
-                callId = callId
-            )
-        }
-
-        assertEquals(listOf(personIdent), tilgang)
-        assertEquals(bearerHeader(oboToken), authorizationHeader)
-        assertEquals(callId, callIdHeader)
-        assertEquals(requestedPersonidenter, requestBody)
-    }
-
-    @Test
-    fun `personsUserHasAccessTo returns null when istilgangskontroll responds forbidden`() {
-        val client = createMockClientForResponse(status = HttpStatusCode.Forbidden)
-
-        val tilgang = runBlocking {
-            client.personsUserHasAccessTo(
-                personIdenter = listOf(personIdent),
-                token = token,
-                callId = callId
-            )
-        }
-
-        assertNull(tilgang)
     }
 
     private fun createMockClientForResponse(

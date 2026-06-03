@@ -19,11 +19,11 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 /**
- * Unit test for the batch access endpoint in TilgangskontrollClient.
- * Tests the personsUserHasAccessTo() method with various scenarios including
+ * Unit test for the `filterPersonsUserHasAccessTo()` method in TilgangskontrollClient.
+ * Tests the `filterPersonsUserHasAccessTo()` method with various scenarios including
  * successful responses, access denied, server errors, and empty lists.
  */
-class VeilederPersonerAccessTest {
+class FilterPersonsUserHasAccessToTest {
     private val token = "token"
     private val oboToken = "obo-token"
     private val callId = "call-id"
@@ -47,12 +47,12 @@ class VeilederPersonerAccessTest {
     }
 
     @Test
-    fun `personsUserHasAccessTo returns filtered list when access is granted`() {
+    fun `filterPersonsUserHasAccessTo returns filtered list when access is granted`() {
         val filteredPersonidenter = listOf("12345678910", "10987654321")
-        val client = createMockClientForBatchResponse(filteredPersonidenter, HttpStatusCode.OK)
+        val client = createMockTilgangskontrollClientForFilterPersonsResponse(filteredPersonidenter, HttpStatusCode.OK)
 
         val result = runBlocking {
-            client.personsUserHasAccessTo(
+            client.filterPersonsUserHasAccessTo(
                 personIdenter = personIdenter,
                 token = token,
                 callId = callId
@@ -64,10 +64,10 @@ class VeilederPersonerAccessTest {
 
     @Test
     fun `personsUserHasAccessTo returns full list when all persons are accessible`() {
-        val client = createMockClientForBatchResponse(personIdenter, HttpStatusCode.OK)
+        val client = createMockTilgangskontrollClientForFilterPersonsResponse(personIdenter, HttpStatusCode.OK)
 
         val result = runBlocking {
-            client.personsUserHasAccessTo(
+            client.filterPersonsUserHasAccessTo(
                 personIdenter = personIdenter,
                 token = token,
                 callId = callId
@@ -79,10 +79,10 @@ class VeilederPersonerAccessTest {
 
     @Test
     fun `personsUserHasAccessTo returns empty list when no persons are accessible`() {
-        val client = createMockClientForBatchResponse(emptyList(), HttpStatusCode.OK)
+        val client = createMockTilgangskontrollClientForFilterPersonsResponse(emptyList(), HttpStatusCode.OK)
 
         val result = runBlocking {
-            client.personsUserHasAccessTo(
+            client.filterPersonsUserHasAccessTo(
                 personIdenter = personIdenter,
                 token = token,
                 callId = callId
@@ -94,10 +94,10 @@ class VeilederPersonerAccessTest {
 
     @Test
     fun `personsUserHasAccessTo returns null when access is forbidden (403)`() {
-        val client = createMockClientForBatchResponse(null, HttpStatusCode.Forbidden)
+        val client = createMockTilgangskontrollClientForFilterPersonsResponse(null, HttpStatusCode.Forbidden)
 
         val result = runBlocking {
-            client.personsUserHasAccessTo(
+            client.filterPersonsUserHasAccessTo(
                 personIdenter = personIdenter,
                 token = token,
                 callId = callId
@@ -109,10 +109,10 @@ class VeilederPersonerAccessTest {
 
     @Test
     fun `personsUserHasAccessTo returns null when server returns error (500)`() {
-        val client = createMockClientForBatchResponse(null, HttpStatusCode.InternalServerError)
+        val client = createMockTilgangskontrollClientForFilterPersonsResponse(null, HttpStatusCode.InternalServerError)
 
         val result = runBlocking {
-            client.personsUserHasAccessTo(
+            client.filterPersonsUserHasAccessTo(
                 personIdenter = personIdenter,
                 token = token,
                 callId = callId
@@ -124,10 +124,10 @@ class VeilederPersonerAccessTest {
 
     @Test
     fun `personsUserHasAccessTo returns null when server returns bad request (400)`() {
-        val client = createMockClientForBatchResponse(null, HttpStatusCode.BadRequest)
+        val client = createMockTilgangskontrollClientForFilterPersonsResponse(null, HttpStatusCode.BadRequest)
 
         val result = runBlocking {
-            client.personsUserHasAccessTo(
+            client.filterPersonsUserHasAccessTo(
                 personIdenter = personIdenter,
                 token = token,
                 callId = callId
@@ -139,10 +139,10 @@ class VeilederPersonerAccessTest {
 
     @Test
     fun `personsUserHasAccessTo handles empty input list`() {
-        val client = createMockClientForBatchResponse(emptyList(), HttpStatusCode.OK)
+        val client = createMockTilgangskontrollClientForFilterPersonsResponse(emptyList(), HttpStatusCode.OK)
 
         val result = runBlocking {
-            client.personsUserHasAccessTo(
+            client.filterPersonsUserHasAccessTo(
                 personIdenter = emptyList(),
                 token = token,
                 callId = callId
@@ -154,10 +154,10 @@ class VeilederPersonerAccessTest {
 
     @Test
     fun `personsUserHasAccessTo calls obo token exchange before making request`() {
-        val client = createMockClientForBatchResponse(personIdenter, HttpStatusCode.OK)
+        val client = createMockTilgangskontrollClientForFilterPersonsResponse(personIdenter, HttpStatusCode.OK)
 
         runBlocking {
-            client.personsUserHasAccessTo(
+            client.filterPersonsUserHasAccessTo(
                 personIdenter = personIdenter,
                 token = token,
                 callId = callId
@@ -178,11 +178,11 @@ class VeilederPersonerAccessTest {
             oboTokenProvider.getOnBehalfOfToken(any(), any())
         } returns null
 
-        val client = createMockClientForBatchResponse(personIdenter, HttpStatusCode.OK)
+        val client = createMockTilgangskontrollClientForFilterPersonsResponse(personIdenter, HttpStatusCode.OK)
 
         val exception = org.junit.jupiter.api.Assertions.assertThrows(RuntimeException::class.java) {
             runBlocking {
-                client.personsUserHasAccessTo(
+                client.filterPersonsUserHasAccessTo(
                     personIdenter = personIdenter,
                     token = token,
                     callId = callId
@@ -193,7 +193,7 @@ class VeilederPersonerAccessTest {
         assertTrue(exception.message?.contains("Failed to request access to list of persons") ?: false)
     }
 
-    private fun createMockClientForBatchResponse(
+    private fun createMockTilgangskontrollClientForFilterPersonsResponse(
         response: List<String>?,
         status: HttpStatusCode
     ): TilgangskontrollClient {
