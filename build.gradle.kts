@@ -6,7 +6,6 @@ val jacksonDataTypeVersion = "2.21.4"
 val ktorVersion = "3.5.0"
 val logbackVersion = "1.5.34"
 val micrometerVersion = "1.16.5"
-val logstashVersion = "9.0"
 val mockkVersion = "1.14.11"
 val slf4jVersion = "2.0.18"
 
@@ -39,7 +38,6 @@ dependencies {
 
     // Logging facade only; consuming apps own the runtime binding (e.g. logback-classic)
     implementation("org.slf4j:slf4j-api:$slf4jVersion")
-    implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
 
     // Tests
     testImplementation("io.ktor:ktor-client-mock:$ktorVersion")

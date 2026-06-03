@@ -4,7 +4,6 @@ import com.auth0.jwk.JwkProviderBuilder
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
-import net.logstash.logback.argument.StructuredArguments
 import org.slf4j.LoggerFactory
 import java.net.URI
 import java.util.concurrent.TimeUnit
@@ -42,11 +41,12 @@ private fun AuthenticationConfig.configureJwt(jwtIssuer: JwtIssuer) {
             if (hasExpectedAudience) {
                 JWTPrincipal(credential.payload)
             } else {
-                log.warn(
-                    "Auth: Unexpected audience for jwt {}, {}",
-                    StructuredArguments.keyValue("issuer", credential.payload.issuer),
-                    StructuredArguments.keyValue("audience", credential.payload.audience),
-                )
+                log
+                    .atWarn()
+                    .setMessage("Auth: Unexpected audience for jwt")
+                    .addKeyValue("issuer", credential.payload.issuer)
+                    .addKeyValue("audience", credential.payload.audience)
+                    .log()
                 null
             }
         }
