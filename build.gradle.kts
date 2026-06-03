@@ -1,6 +1,6 @@
 group = "no.nav.syfo"
 version = "0.0.41"
-description = "Shared Kotlin library for checking veileder access via istilgangskontroll"
+description = "Shared Kotlin utility library for iSyfo backend Ktor services."
 
 val jacksonVersion = "2.21.4"
 val ktorVersion = "3.5.0"
