@@ -66,10 +66,9 @@ public fun ApplicationCall.personIdentOrThrow(action: String): String =
 /** Returns the value of the `Nav-Call-Id` request header used for distributed tracing and correlation of log messages
  * across services. If header is missing returns null and logs a warning.
  * Consider using package io.ktor.server.plugins.callid plugin version instead if app installs it. */
-public val ApplicationCall.callId: String?
-    get() =
-        this.request.headers[NAV_CALL_ID_HEADER]
-            ?: null.also { log.warn("Call id header missing in request.") }
+public fun ApplicationCall.callIdOrGenerate(): String =
+    this.request.headers[NAV_CALL_ID_HEADER]
+        ?: generateCallId().also { log.warn("Call id header missing in request, generated new call id.") }
 
 /** Returns the `azp` (authorized party) claim from the incoming Bearer token.
  * Returns null and logs a warning if the Authorization header or the claim is absent. */

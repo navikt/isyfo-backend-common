@@ -2,8 +2,11 @@ package no.nav.syfo.common.tilgangskontroll
 
 import io.ktor.server.routing.RoutingContext
 import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
+import no.nav.syfo.common.types.ident.NavIdent
+import no.nav.syfo.common.types.ident.PersonIdent
 import no.nav.syfo.common.util.bearerTokenOrThrow
-import no.nav.syfo.common.util.callId
+import no.nav.syfo.common.util.callIdOrGenerate
+import no.nav.syfo.common.util.navIdentOrThrow
 import no.nav.syfo.common.util.personIdentOrThrow
 
 /**
@@ -20,14 +23,14 @@ import no.nav.syfo.common.util.personIdentOrThrow
  * @param tilgangskontrollClient Configured [TilgangskontrollClient].
  * @param requiresWriteAccess If true, checks for write access level according to the user's Modia SYFO fagtilgang.
  *                            If false, checks for at least read access level.
- * @param block The handler to execute if access is granted. Receives the validated personIdent
- *              that access was granted for.
+ * @param block The handler to execute if access is granted. Receives an [AuthorizedCall] with
+ *              the validated personIdent, token, callId, and (lazy) navIdent.
  */
 public suspend fun RoutingContext.checkPersonAndSyfoTilgang(
     action: String,
     tilgangskontrollClient: TilgangskontrollClient,
     requiresWriteAccess: Boolean = false,
-    block: suspend (String) -> Unit,
+    block: suspend (AuthorizedCall) -> Unit,
 ) {
     val personIdent = call.personIdentOrThrow(action)
 
@@ -55,18 +58,18 @@ public suspend fun RoutingContext.checkPersonAndSyfoTilgang(
  * @param tilgangskontrollClient Configured [TilgangskontrollClient] used to check access.
  * @param requiresWriteAccess If true, checks for write access level according to the user's Modia SYFO fagtilgang.
  *                            If false, checks for at least read access level.
- * @param block The handler to execute if access is granted. Receives the validated personIdent
- *              that access was granted for.
+ * @param block The handler to execute if access is granted. Receives an [AuthorizedCall] with
+ *              the validated personIdent, token, callId, and (lazy) navIdent.
  */
 public suspend fun RoutingContext.checkPersonAndSyfoTilgang(
     action: String,
     personIdent: String,
     tilgangskontrollClient: TilgangskontrollClient,
     requiresWriteAccess: Boolean = false,
-    block: suspend (String) -> Unit,
+    block: suspend (AuthorizedCall) -> Unit,
 ) {
     val token = call.bearerTokenOrThrow(action)
-    val callId = call.callId ?: "unknown"
+    val callId = call.callIdOrGenerate()
 
     val hasAccess =
         if (requiresWriteAccess) {
@@ -86,7 +89,14 @@ public suspend fun RoutingContext.checkPersonAndSyfoTilgang(
     if (!hasAccess) {
         throw TilgangDeniedException(action = action)
     } else {
-        block(personIdent)
+        block(
+            AuthorizedCall(
+                personIdent = PersonIdent(personIdent),
+                token = token,
+                callId = callId,
+                navIdentProvider = { NavIdent(call.navIdentOrThrow(action)) },
+            ),
+        )
     }
 }
 
@@ -106,7 +116,7 @@ public suspend fun RoutingContext.filterPersonsUserHasAccessTo(
     tilgangskontrollClient: TilgangskontrollClient,
 ): List<String>? {
     val token = call.bearerTokenOrThrow(action)
-    val callId = call.callId ?: "unknown"
+    val callId = call.callIdOrGenerate()
 
     val personsUserHasAccessTo = tilgangskontrollClient.filterPersonsUserHasAccessTo(personIdenter, token, callId)
 
