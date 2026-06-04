@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.0.43]
+
+### Added
+- `PersonIdent` and `NavIdent` as `@JvmInline` value classes under `no.nav.syfo.common.types.ident`.
+- `AuthorizedCall` — typed context passed to the `checkPersonAndSyfoTilgang` handler block, carrying `personIdent`, `token`, `callId`, and a lazily-resolved `navIdent` (extracted from the `NAVident` token claim only on first access).
+- `generateCallId()` utility function that can be used in callId plugin in apps to get same generation behavior as in library and between apps.
+
+### Changed
+- `checkPersonAndSyfoTilgang` block handler now receives `AuthorizedCall` instead of a plain `personIdent: String`.
+- `callId` extension property renamed to `callIdFromHeader` to avoid confusion with similar callId extension function from plugin in apps, and changed to return a non-null `String`, generating a UUID fallback when the header is missing.
+
 ## [0.0.42]
 
 Maintenance: Dependency cleanup — manage Jackson via `jackson-bom`, scope `micrometer-core` to `implementation`, and drop `logstash-logback-encoder` in favour of the SLF4J fluent API for structured logging.
