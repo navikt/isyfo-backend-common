@@ -1,5 +1,7 @@
 package no.nav.syfo.common.types.ident
 
+import java.util.UUID
+
 @JvmInline
 public value class PersonIdent(
     public val value: String,
@@ -14,3 +16,9 @@ public value class PersonIdent(
         val elevenDigits = Regex("^\\d{11}\$")
     }
 }
+
+/**
+ * Hashes this [PersonIdent] into a deterministic UUID string for use as a Kafka record key,
+ * ensuring per-person ordering on the topic without exposing the raw identity number.
+ */
+public fun PersonIdent.asProducerRecordKey(): String = UUID.nameUUIDFromBytes(value.toByteArray()).toString()
