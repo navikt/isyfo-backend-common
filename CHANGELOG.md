@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.0.45]
+
+### Changed
+- `TilgangskontrollClient.filterPersonsUserHasAccessTo` now accepts `List<PersonIdent>` and returns `List<PersonIdent>?` instead of `List<String>` / `List<String>?`.
+- `RoutingContext.filterPersonsUserHasAccessTo` updated accordingly — `personIdenter` parameter and return type are now `List<PersonIdent>` / `List<PersonIdent>?`.
+
 ## [0.0.44]
 
 ### Added
