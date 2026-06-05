@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.0.44]
+
+### Added
+- `PersonIdent.asProducerRecordKey()` extension function — hashes a `PersonIdent` into a deterministic UUID string (via `UUID.nameUUIDFromBytes`) for use as a Kafka record key.
+
 ## [0.0.43]
 
 ### Added
