@@ -20,7 +20,7 @@ In route handlers, it is easiest to check tilgangskontroll through the `RoutingC
 
 ### `checkPersonAndSyfoTilgang`
 
-Checks that the user has populasjonstilgang to a specific person and the required Modia SYFO fagtilgang. If the checks pass, the `block` handler is executed with the validated `personIdent` passed as its argument.
+Checks that the user has populasjonstilgang to a specific person and the required Modia SYFO fagtilgang. If the checks pass, the `block` handler is executed with the authorized user (`AuthorizedUser`, carrying the token and a lazily-resolved `navIdent`), the validated `personIdent`, and the `callId`.
 
 One overload reads `nav-personident` from the request header:
 
@@ -30,7 +30,11 @@ get("/person") {
         action = "read person",
         tilgangskontrollClient = tilgangskontrollClient,
         requiresWriteAccess = false, // false by default
-    ) { validatedPersonIdent ->
+    ) { authorizedUser, targetPersonIdent, callId ->
+        callOtherService(authorizedUser.token, callId)
+        
+        getThing(authorizedUser.navIdent, targetPersonIdent)
+        
         call.respond(HttpStatusCode.OK)
     }
 }
@@ -41,12 +45,15 @@ Another overload takes `personIdent` as an explicit parameter (e.g. when read fr
 ```kotlin
 post("/person") {
     val requestDTO = call.receive<RequestDTO>()
+    
     checkPersonAndSyfoTilgang(
         action = "write person",
         personIdent = requestDTO.personIdent,
         tilgangskontrollClient = tilgangskontrollClient,
         requiresWriteAccess = true,
-    ) { validatedPersonIdent ->
+    ) { authorizedUser, targetPersonIdent ->
+        createThing(authorizedUser.navIdent, targetPersonIdent)
+        
         call.respond(HttpStatusCode.Created)
     }
 }
@@ -98,8 +105,8 @@ val hasWriteAccess = tilgangskontrollClient.hasWriteAccess(
     token = incomingToken,
 )
 
-val accessiblePersonIdenter: List<String>? = tilgangskontrollClient.filterPersonsUserHasAccessTo(
-    personIdenter = listOf("12345678910", "10987654321"),
+val accessiblePersonIdenter: List<PersonIdent>? = tilgangskontrollClient.filterPersonsUserHasAccessTo(
+    personIdenter = listOf(PersonIdent("12345678910"), PersonIdent("10987654321")),
     token = incomingToken,
     callId = "call-id",
 )

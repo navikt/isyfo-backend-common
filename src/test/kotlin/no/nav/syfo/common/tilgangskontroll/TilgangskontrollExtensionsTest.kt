@@ -11,6 +11,7 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
+import no.nav.syfo.common.types.ident.PersonIdent
 import no.nav.syfo.common.util.NAV_CALL_ID_HEADER
 import no.nav.syfo.common.util.NAV_PERSONIDENT_HEADER
 import no.nav.syfo.common.util.bearerHeader
@@ -37,6 +38,9 @@ class TilgangskontrollExtensionsTest {
                     },
             )
         var blockCalled = false
+        var blockToken: String? = null
+        var blockPersonIdent: PersonIdent? = null
+        var blockCallId: String? = null
 
         coEvery {
             tilgangskontrollClient.hasAccess(callId, personIdent, token)
@@ -46,12 +50,18 @@ class TilgangskontrollExtensionsTest {
             routingContext.checkPersonAndSyfoTilgang(
                 action = action,
                 tilgangskontrollClient = tilgangskontrollClient,
-            ) {
+            ) { authorized, targetPersonIdent, blockCallIdArg ->
                 blockCalled = true
+                blockToken = authorized.token
+                blockPersonIdent = targetPersonIdent
+                blockCallId = blockCallIdArg
             }
         }
 
         Assertions.assertTrue(blockCalled)
+        Assertions.assertEquals(token, blockToken)
+        Assertions.assertEquals(PersonIdent(personIdent), blockPersonIdent)
+        Assertions.assertEquals(callId, blockCallId)
         coVerify(exactly = 1) {
             tilgangskontrollClient.hasAccess(callId, personIdent, token)
         }
@@ -82,7 +92,7 @@ class TilgangskontrollExtensionsTest {
                 action = action,
                 tilgangskontrollClient = tilgangskontrollClient,
                 requiresWriteAccess = true,
-            ) {
+            ) { _, _, _ ->
                 blockCalled = true
             }
         }
@@ -118,7 +128,7 @@ class TilgangskontrollExtensionsTest {
                 routingContext.checkPersonAndSyfoTilgang(
                     action = action,
                     tilgangskontrollClient = tilgangskontrollClient,
-                ) {
+                ) { _, _, _ ->
                     blockCalled = true
                 }
             }
@@ -146,7 +156,7 @@ class TilgangskontrollExtensionsTest {
                 routingContext.checkPersonAndSyfoTilgang(
                     action = action,
                     tilgangskontrollClient = tilgangskontrollClient,
-                ) {}
+                ) { _, _, _ -> }
             }
         }
 
@@ -174,7 +184,7 @@ class TilgangskontrollExtensionsTest {
                 routingContext.checkPersonAndSyfoTilgang(
                     action = action,
                     tilgangskontrollClient = tilgangskontrollClient,
-                ) {}
+                ) { _, _, _ -> }
             }
         }
 
@@ -207,7 +217,7 @@ class TilgangskontrollExtensionsTest {
                 action = action,
                 personIdent = personIdent,
                 tilgangskontrollClient = tilgangskontrollClient,
-            ) {
+            ) { _, _, _ ->
                 blockCalled = true
             }
         }
@@ -240,7 +250,7 @@ class TilgangskontrollExtensionsTest {
                 personIdent = personIdent,
                 tilgangskontrollClient = tilgangskontrollClient,
                 requiresWriteAccess = true,
-            ) {
+            ) { _, _, _ ->
                 blockCalled = true
             }
         }
@@ -273,7 +283,7 @@ class TilgangskontrollExtensionsTest {
                     action = action,
                     personIdent = personIdent,
                     tilgangskontrollClient = tilgangskontrollClient,
-                ) {
+                ) { _, _, _ ->
                     blockCalled = true
                 }
             }
@@ -298,7 +308,7 @@ class TilgangskontrollExtensionsTest {
                     action = action,
                     personIdent = personIdent,
                     tilgangskontrollClient = tilgangskontrollClient,
-                ) {}
+                ) { _, _, _ -> }
             }
         }
 
