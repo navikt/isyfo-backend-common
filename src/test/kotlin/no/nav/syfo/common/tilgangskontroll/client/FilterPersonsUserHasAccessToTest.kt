@@ -11,6 +11,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.syfo.common.http.commonConfig
 import no.nav.syfo.common.testhelper.respond
 import no.nav.syfo.common.token.OboTokenProvider
+import no.nav.syfo.common.types.ident.PersonIdent
 import no.nav.syfo.common.util.ClientConfig
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -28,7 +29,8 @@ class FilterPersonsUserHasAccessToTest {
     private val token = "token"
     private val oboToken = "obo-token"
     private val callId = "call-id"
-    private val personIdenter = listOf("12345678910", "10987654321", "11223344556")
+    private val personIdenter =
+        listOf(PersonIdent("12345678910"), PersonIdent("10987654321"), PersonIdent("11223344556"))
     private val config =
         ClientConfig(
             baseUrl = "isTilgangskontrollUrl",
@@ -50,7 +52,7 @@ class FilterPersonsUserHasAccessToTest {
 
     @Test
     fun `filterPersonsUserHasAccessTo returns filtered list when access is granted`() {
-        val filteredPersonidenter = listOf("12345678910", "10987654321")
+        val filteredPersonidenter = listOf(PersonIdent("12345678910"), PersonIdent("10987654321"))
         val client = createMockTilgangskontrollClientForFilterPersonsResponse(filteredPersonidenter, HttpStatusCode.OK)
 
         val result =
@@ -94,7 +96,7 @@ class FilterPersonsUserHasAccessToTest {
                 )
             }
 
-        assertEquals(emptyList<String>(), result)
+        assertEquals(emptyList<PersonIdent>(), result)
     }
 
     @Test
@@ -158,7 +160,7 @@ class FilterPersonsUserHasAccessToTest {
                 )
             }
 
-        assertEquals(emptyList<String>(), result)
+        assertEquals(emptyList<PersonIdent>(), result)
     }
 
     @Test
@@ -204,7 +206,7 @@ class FilterPersonsUserHasAccessToTest {
     }
 
     private fun createMockTilgangskontrollClientForFilterPersonsResponse(
-        response: List<String>?,
+        response: List<PersonIdent>?,
         status: HttpStatusCode,
     ): TilgangskontrollClient {
         val httpClient =

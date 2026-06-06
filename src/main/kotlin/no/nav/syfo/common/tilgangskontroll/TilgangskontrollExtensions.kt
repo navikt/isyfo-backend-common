@@ -112,9 +112,9 @@ public suspend fun RoutingContext.checkPersonAndSyfoTilgang(
  */
 public suspend fun RoutingContext.filterPersonsUserHasAccessTo(
     action: String,
-    personIdenter: List<String>,
+    personIdenter: List<PersonIdent>,
     tilgangskontrollClient: TilgangskontrollClient,
-): List<String>? {
+): List<PersonIdent>? {
     val token = call.bearerTokenOrThrow(action)
     val callId = call.callIdOrGenerate()
 
