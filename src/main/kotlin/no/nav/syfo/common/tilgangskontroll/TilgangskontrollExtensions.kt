@@ -55,7 +55,7 @@ public suspend fun RoutingContext.checkPersonAndSyfoTilgang(
  * Expects call id from call id header, but does not throw if it's missing.
  *
  * @param action Short description of the action being performed, used in error messages.
- * @param personIdent The person's national identity number to check access for.
+ * @param personIdent The [PersonIdent] of the person to check access for.
  * @param tilgangskontrollClient Configured [TilgangskontrollClient] used to check access.
  * @param requiresWriteAccess If true, checks for write access level according to the user's Modia SYFO fagtilgang.
  *                            If false, checks for at least read access level.
@@ -65,7 +65,7 @@ public suspend fun RoutingContext.checkPersonAndSyfoTilgang(
  */
 public suspend fun RoutingContext.checkPersonAndSyfoTilgang(
     action: String,
-    personIdent: String,
+    personIdent: PersonIdent,
     tilgangskontrollClient: TilgangskontrollClient,
     requiresWriteAccess: Boolean = false,
     block: suspend (AuthorizedUser, PersonIdent, String) -> Unit,
@@ -96,7 +96,7 @@ public suspend fun RoutingContext.checkPersonAndSyfoTilgang(
                 token = token,
                 navIdentProvider = { NavIdent(call.navIdentOrThrow(action)) },
             ),
-            PersonIdent(personIdent),
+            personIdent,
             callId,
         )
     }

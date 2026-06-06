@@ -40,7 +40,7 @@ get("/person") {
 }
 ```
 
-Another overload takes `personIdent` as an explicit parameter (e.g. when read from the request body):
+Another overload takes `personIdent` as an explicit `PersonIdent` parameter (e.g. when read from the request body):
 
 ```kotlin
 post("/person") {
@@ -48,7 +48,7 @@ post("/person") {
     
     checkPersonAndSyfoTilgang(
         action = "write person",
-        personIdent = requestDTO.personIdent,
+        personIdent = PersonIdent(requestDTO.personIdent),
         tilgangskontrollClient = tilgangskontrollClient,
         requiresWriteAccess = true,
     ) { authorizedUser, targetPersonIdent ->
@@ -95,13 +95,13 @@ If you need to check access outside of a Ktor route handler, use `Tilgangskontro
 ```kotlin
 val hasReadAccess = tilgangskontrollClient.hasAccess(
     callId = "call-id",
-    personIdent = "12345678910",
+    personIdent = PersonIdent("12345678910"),
     token = incomingToken,
 )
 
 val hasWriteAccess = tilgangskontrollClient.hasWriteAccess(
     callId = "call-id",
-    personIdent = "12345678910",
+    personIdent = PersonIdent("12345678910"),
     token = incomingToken,
 )
 

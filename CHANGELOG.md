@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 - `AuthorizedCall` renamed to `AuthorizedUser` and narrowed to carry only the authenticated user's `token` and lazily-resolved `navIdent`. The `personIdent` and `callId` are no longer part of the object.
 - `checkPersonAndSyfoTilgang` block handler now receives three arguments — `AuthorizedUser`, the validated `PersonIdent`, and the `callId: String` — instead of a single `AuthorizedCall`.
+- `checkPersonAndSyfoTilgang` overload that takes an explicit `personIdent` parameter now accepts `PersonIdent` instead of `String`.
+- `TilgangskontrollClient.hasAccess` and `hasWriteAccess` now take `personIdent` as a `PersonIdent` instead of a `String`.
+- `ApplicationCall.personIdent`, `personIdentOrThrow()` and `personIdentOrThrow(action)` now return `PersonIdent` instead of `String`. Throws `IllegalArgumentException` if the header value is present but not a valid `PersonIdent`.
 
 ## [0.0.45]
 

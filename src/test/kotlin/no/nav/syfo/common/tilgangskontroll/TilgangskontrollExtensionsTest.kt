@@ -9,6 +9,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.registerInstanceFactory
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
 import no.nav.syfo.common.types.ident.PersonIdent
@@ -16,15 +17,21 @@ import no.nav.syfo.common.util.NAV_CALL_ID_HEADER
 import no.nav.syfo.common.util.NAV_PERSONIDENT_HEADER
 import no.nav.syfo.common.util.bearerHeader
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class TilgangskontrollExtensionsTest {
     private val action = "read aktivitetskrav"
     private val callId = "123"
-    private val personIdent = "12345678910"
+    private val personIdent = PersonIdent("12345678910")
     private val token = "token"
 
     private val tilgangskontrollClient = mockk<TilgangskontrollClient>()
+
+    @BeforeEach
+    fun setup() {
+        registerInstanceFactory { personIdent }
+    }
 
     @Test
     fun `calls hasAccess and executes block when read access is granted`() {
@@ -33,7 +40,7 @@ class TilgangskontrollExtensionsTest {
                 headers =
                     Headers.build {
                         append(NAV_CALL_ID_HEADER, callId)
-                        append(NAV_PERSONIDENT_HEADER, personIdent)
+                        append(NAV_PERSONIDENT_HEADER, personIdent.value)
                         append(HttpHeaders.Authorization, bearerHeader(token))
                     },
             )
@@ -60,7 +67,7 @@ class TilgangskontrollExtensionsTest {
 
         Assertions.assertTrue(blockCalled)
         Assertions.assertEquals(token, blockToken)
-        Assertions.assertEquals(PersonIdent(personIdent), blockPersonIdent)
+        Assertions.assertEquals(personIdent, blockPersonIdent)
         Assertions.assertEquals(callId, blockCallId)
         coVerify(exactly = 1) {
             tilgangskontrollClient.hasAccess(callId, personIdent, token)
@@ -77,7 +84,7 @@ class TilgangskontrollExtensionsTest {
                 headers =
                     Headers.build {
                         append(NAV_CALL_ID_HEADER, callId)
-                        append(NAV_PERSONIDENT_HEADER, personIdent)
+                        append(NAV_PERSONIDENT_HEADER, personIdent.value)
                         append(HttpHeaders.Authorization, bearerHeader(token))
                     },
             )
@@ -113,7 +120,7 @@ class TilgangskontrollExtensionsTest {
                 headers =
                     Headers.build {
                         append(NAV_CALL_ID_HEADER, callId)
-                        append(NAV_PERSONIDENT_HEADER, personIdent)
+                        append(NAV_PERSONIDENT_HEADER, personIdent.value)
                         append(HttpHeaders.Authorization, bearerHeader(token))
                     },
             )
@@ -147,7 +154,7 @@ class TilgangskontrollExtensionsTest {
                 headers =
                     Headers.build {
                         append(NAV_CALL_ID_HEADER, callId)
-                        append(NAV_PERSONIDENT_HEADER, personIdent)
+                        append(NAV_PERSONIDENT_HEADER, personIdent.value)
                     },
             )
 

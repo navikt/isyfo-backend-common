@@ -3,6 +3,7 @@ package no.nav.syfo.common.util
 import com.auth0.jwt.JWT
 import io.ktor.http.*
 import io.ktor.server.application.*
+import no.nav.syfo.common.types.ident.PersonIdent
 import org.slf4j.LoggerFactory
 
 private val log = LoggerFactory.getLogger("no.nav.syfo.common.util")
@@ -64,32 +65,33 @@ public fun ApplicationCall.navIdentOrThrow(action: String): String =
     }
 
 /**
- * Returns the value of the `nav-personident` request header, or null if not present.
+ * Returns the value of the `nav-personident` request header as a [PersonIdent], or null if not present.
  * The header is used to carry the Norwegian national identity number (fødselsnummer/D-nummer)
  * of the citizen a request concerns.
+ * @throws [IllegalArgumentException] if the header is present but not a valid [PersonIdent].
  */
-public val ApplicationCall.personIdent: String?
-    get() = this.request.headers[NAV_PERSONIDENT_HEADER]
+public val ApplicationCall.personIdent: PersonIdent?
+    get() = this.request.headers[NAV_PERSONIDENT_HEADER]?.let { PersonIdent(it) }
 
 /**
- * Returns the value of the `nav-personident` request header.
+ * Returns the value of the `nav-personident` request header as a [PersonIdent].
  * The header is used to carry the Norwegian national identity number (fødselsnummer/D-nummer)
  * of the citizen a request concerns.
- * @throws [IllegalArgumentException] if the header is absent.
+ * @throws [IllegalArgumentException] if the header is absent or not a valid [PersonIdent].
  */
-public fun ApplicationCall.personIdentOrThrow(): String =
+public fun ApplicationCall.personIdentOrThrow(): PersonIdent =
     requireNotNull(personIdent) {
         "No $NAV_PERSONIDENT_HEADER header supplied."
     }
 
 /**
- * Returns the value of the `nav-personident` request header.
+ * Returns the value of the `nav-personident` request header as a [PersonIdent].
  * The header is used to carry the Norwegian national identity number (fødselsnummer/D-nummer)
  * of the citizen a request concerns.
  * @param action Short description of the action being performed, used in error messages.
- * @throws [IllegalArgumentException] if the header is absent.
+ * @throws [IllegalArgumentException] if the header is absent or not a valid [PersonIdent].
  */
-public fun ApplicationCall.personIdentOrThrow(action: String): String =
+public fun ApplicationCall.personIdentOrThrow(action: String): PersonIdent =
     requireNotNull(personIdent) {
         "Failed to $action: No $NAV_PERSONIDENT_HEADER header supplied."
     }

@@ -37,7 +37,7 @@ public class TilgangskontrollClient(
 
     private suspend fun getTilgang(
         callId: String,
-        personIdent: String,
+        personIdent: PersonIdent,
         token: String,
     ): Tilgang? {
         val oboToken =
@@ -54,7 +54,7 @@ public class TilgangskontrollClient(
             val tilgangResponse =
                 httpClient.get(tilgangskontrollPersonUrl) {
                     header(HttpHeaders.Authorization, bearerHeader(oboToken))
-                    header(NAV_PERSONIDENT_HEADER, personIdent)
+                    header(NAV_PERSONIDENT_HEADER, personIdent.value)
                     header(NAV_CALL_ID_HEADER, callId)
                     accept(ContentType.Application.Json)
                 }
@@ -92,7 +92,7 @@ public class TilgangskontrollClient(
      */
     public suspend fun hasAccess(
         callId: String,
-        personIdent: String,
+        personIdent: PersonIdent,
         token: String,
     ): Boolean = getTilgang(callId, personIdent, token)?.erGodkjent ?: false
 
@@ -108,7 +108,7 @@ public class TilgangskontrollClient(
      */
     public suspend fun hasWriteAccess(
         callId: String,
-        personIdent: String,
+        personIdent: PersonIdent,
         token: String,
     ): Boolean =
         getTilgang(callId, personIdent, token)?.let {
