@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.0.46]
+
 ### Changed
 - `AuthorizedCall` renamed to `AuthorizedUser` and narrowed to carry only the authenticated user's `token` and lazily-resolved `navIdent`. The `personIdent` and `callId` are no longer part of the object.
 - `checkPersonAndSyfoTilgang` block handler now receives three arguments — `AuthorizedUser`, the validated `PersonIdent`, and the `callId: String` — instead of a single `AuthorizedCall`.
