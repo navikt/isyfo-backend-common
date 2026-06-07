@@ -2,21 +2,14 @@ group = "no.nav.syfo"
 version = "0.0.45"
 description = "Shared Kotlin utility library for iSyfo backend Ktor services."
 
-val jacksonVersion = "2.21.4"
-val ktorVersion = "3.5.0"
-val logbackVersion = "1.5.34"
-val micrometerVersion = "1.16.5"
-val mockkVersion = "1.14.11"
-val slf4jVersion = "2.0.18"
-
 plugins {
-    kotlin("jvm") version "2.3.21"
+    alias(libs.plugins.kotlin.jvm)
     `java-library`
     `java-test-fixtures`
     `maven-publish`
-    id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
-    id("com.adarshr.test-logger") version "4.0.0"
-    id("com.github.ben-manes.versions") version "0.54.0"
+    alias(libs.plugins.ktlint)
+    alias(libs.plugins.test.logger)
+    alias(libs.plugins.versions)
 }
 
 repositories {
@@ -25,31 +18,31 @@ repositories {
 
 dependencies {
     // Exposed in public API — consumers need these on their compile classpath
-    api("io.ktor:ktor-client-core:$ktorVersion")
-    api("io.ktor:ktor-server-auth-jwt:$ktorVersion")
+    api(libs.ktor.client.core)
+    api(libs.ktor.server.auth.jwt)
     // BOM keeps all Jackson artifacts (incl. transitive ones) on a single aligned version
-    api(platform("com.fasterxml.jackson:jackson-bom:$jacksonVersion"))
-    api("com.fasterxml.jackson.module:jackson-module-kotlin")
-    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    api(platform(libs.jackson.bom))
+    api(libs.jackson.module.kotlin)
+    api(libs.jackson.datatype.jsr310)
 
     // Internal — encapsulated behind library functions, not referenced directly by consumers
-    implementation("io.micrometer:micrometer-core:$micrometerVersion")
-    implementation("io.ktor:ktor-client-apache5:$ktorVersion")
-    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-    implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
+    implementation(libs.micrometer.core)
+    implementation(libs.ktor.client.apache5)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.jackson)
 
     // Logging facade only; consuming apps own the runtime binding (e.g. logback-classic)
-    implementation("org.slf4j:slf4j-api:$slf4jVersion")
+    implementation(libs.slf4j.api)
 
     // Test fixtures (published as a separate -test-fixtures artifact); version supplied by the Jackson BOM
-    testFixturesImplementation(platform("com.fasterxml.jackson:jackson-bom:$jacksonVersion"))
-    testFixturesImplementation("com.fasterxml.jackson.core:jackson-annotations")
+    testFixturesImplementation(platform(libs.jackson.bom))
+    testFixturesImplementation(libs.jackson.annotations)
 
     // Tests
-    testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
-    testImplementation("io.mockk:mockk:$mockkVersion")
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testImplementation("ch.qos.logback:logback-classic:$logbackVersion")
+    testImplementation(libs.ktor.client.mock)
+    testImplementation(libs.mockk)
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.logback.classic)
     testImplementation(kotlin("test"))
 }
 
