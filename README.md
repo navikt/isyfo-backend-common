@@ -40,16 +40,16 @@ repositories {
     maven {
         url = uri("https://maven.pkg.github.com/navikt/isyfo-backend-common")
         credentials {
-            username = project.findProperty("githubUser") as String? ?: "x-access-token"
-            password = project.findProperty("githubPassword") as String? ?: System.getenv("GITHUB_TOKEN")
+            username = providers.gradleProperty("githubUser").orNull
+            password = providers.gradleProperty("githubPassword").orNull
         }
     }
 }
 ```
 
-In CI, the `kotlin-build-deploy` workflow from `isworkflows` sets the environment variables `ORG_GRADLE_PROJECT_githubUser` and `ORG_GRADLE_PROJECT_githubPassword`, which makes Gradle set the corresponding Gradle project properties referenced above. In CI workflows the `GITHUB_TOKEN` is also automatically provided by GitHub Actions.
+In CI, the `kotlin-build-deploy` workflow from `isworkflows` sets the environment variables `ORG_GRADLE_PROJECT_githubUser` and `ORG_GRADLE_PROJECT_githubPassword`, which makes Gradle set the corresponding Gradle project properties referenced above.
 
-Locally, you can set the env var `GITHUB_TOKEN` (or `ORG_GRADLE_PROJECT_githubPassord`) to a GitHub personal access token with the `read:packages` scope. (You can use the same that you use with `NPM_AUTH_TOKEN` in frontend projects.) This will allow you to run Gradle tasks that need to fetch the library in consuming apps.
+Locally, you can set the env var `ORG_GRADLE_PROJECT_githubPassord` or the Gradle property `githubPassword` to a GitHub personal access token (PAT) with the `read:packages` scope. You can use the same PAT that you use with `NPM_AUTH_TOKEN` in frontend projects. This will allow you to run Gradle tasks that need to fetch the library in consuming apps.
 
 ---
 
@@ -57,7 +57,7 @@ Locally, you can set the env var `GITHUB_TOKEN` (or `ORG_GRADLE_PROJECT_githubPa
 
 ### Logging
 
-The library uses SLF4J for logging and does not depend on any specific logging backend. Consuming apps own the binding (e.g. Logback). Structured log arguments use `logstash-logback-encoder`'s `StructuredArguments` — these are emitted as top-level JSON fields when the logstash encoder is active, making them queryable by field name in Kibana/Loki.
+The library uses SLF4J for logging and does not depend on any specific logging backend. Consuming apps own the binding (e.g. Logback).
 
 ### Metrics
 
@@ -81,41 +81,52 @@ Without this, library counters will not be visible at the `/metrics` endpoint an
 
 Merges to `main` without a version bump (e.g. docs changes) are skipped silently — the workflow checks whether the version tag already exists before doing anything.
 
-### Local development
-
-Run the main validation steps locally:
+### Useful Gradle tasks
 
 ```bash
-./gradlew clean test
-./gradlew ktlintCheck
-./gradlew jar
+./gradlew check          # Runs all verification: tests + ktlintCheck
+./gradlew ktlintFormat   # Auto-formats code with ktlint
+./gradlew build          # Full build: compile + check + jar
 ```
 
-#### Testing changes in a consumer app without publishing
+In IntelliJ IDEA, you can run Gradle tasks from Gradle tool window.
 
-Use `publishToMavenLocal` to install the library into your local Maven cache (`~/.m2`), then reference it from the consumer app without going through GitHub Packages:
+### Testing library changes in a consumer app locally
+
+You can test changes you have made in the library in an app that consumes the library without first publishing a new version to GitHub Packages.
+
+First set version in `build.gradle.kts` in library (this repo) to a new version that does not exist yet on GitHub Packages. For example:
+
+```kotlin
+group = "no.nav.syfo"
+version = "0.0.50" // A version number not found on GitHub packages
+description = "Shared Kotlin utility library for iSyfo backend Ktor services."
+```
+
+Then use the Gradle task `publishToMavenLocal` to build and install the library with current code into your local Maven cache (`~/.m2`).
 
 ```bash
 # In this repo — publish current state to local cache
 ./gradlew publishToMavenLocal
 ```
 
-In the consumer's `build.gradle.kts`, add `mavenLocal()` **first** in the repositories block so it takes precedence over GitHub Packages:
+Then reference this local library version from the consumer app.  In the consumer's `build.gradle.kts`, update the version of the library to the version you published locally, and add `mavenLocal()` to the bottom of the repositories block.
 
+**build.gradle.kts file in consumer app**
 ```kotlin
+val isyfoBackendCommon = "0.0.50" // same version you published locally
+
+// [...]
+
 repositories {
-    mavenLocal()  // picks up locally published version
-    maven {
-        url = uri("https://maven.pkg.github.com/navikt/isyfo-backend-common")
-        credentials {
-            username = project.findProperty("githubUser") as String? ?: "x-access-token"
-            password = project.findProperty("githubPassword") as String? ?: System.getenv("GITHUB_TOKEN")
-        }
-    }
+    // other maven repositories
+    mavenLocal()  // picks up locally published version not found in the repositories above
 }
 ```
 
-Remember to remove `mavenLocal()` before merging — it should not be in the final build configuration.
+In IntelliJ, you might need to *Sync Gradle Changes* after editing `build.gradle.tks` in the consuming app. Click the sync button that appears in top right corner, or find the **Sync All Gradle Projects** action.
+
+Remove `mavenLocal()` when done testing, or leave it for convenience later.
 
 ---
 
