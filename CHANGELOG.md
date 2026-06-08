@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.0.47]
+
+### Added
+- `MockTilgangskontrollRequestHandler` in test fixtures — simulates `istilgangskontroll` endpoints (`/person` and `/brukere`) based on configurable per-`NavIdent` tilgang details (`MockUserTilgangDetails`, `MockUserSyfoTilgangLevel`).
+- `MockAzureAdRequestHandler` in test fixtures — simulates the Azure AD OBO token exchange endpoint by echoing the assertion token back, enabling downstream mock handlers to read the `NAVident` claim.
+- `MockRequestHandlerUtils.kt` in test fixtures — generic `respond` and `receiveBody` helpers for use with the Ktor mock engine, replacing earlier `RequestUtils.kt` in test package.
+
+### Changed
+- `ApplicationCall.navIdent`, `navIdentOrThrow()`, and `navIdentOrThrow(action)` now return `NavIdent` instead of `String`.
+- `MockTilgangResponse` moved to `no.nav.syfo.common.mock.tilgangskontroll` subpackage (was `no.nav.syfo.common.mock`).
+- `MockAzureAdTokenResponse` moved to `no.nav.syfo.common.mock.token.azuread` subpackage (was `no.nav.syfo.common.mock`).
+
 ## [0.0.46]
 
 ### Changed

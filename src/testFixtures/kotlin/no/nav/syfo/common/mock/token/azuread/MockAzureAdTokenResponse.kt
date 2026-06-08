@@ -1,4 +1,4 @@
-package no.nav.syfo.common.mock
+package no.nav.syfo.common.mock.token.azuread
 
 import com.fasterxml.jackson.annotation.JsonProperty
 

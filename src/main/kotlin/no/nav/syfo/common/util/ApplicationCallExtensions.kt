@@ -3,6 +3,7 @@ package no.nav.syfo.common.util
 import com.auth0.jwt.JWT
 import io.ktor.http.*
 import io.ktor.server.application.*
+import no.nav.syfo.common.types.ident.NavIdent
 import no.nav.syfo.common.types.ident.PersonIdent
 import org.slf4j.LoggerFactory
 
@@ -39,17 +40,21 @@ public fun ApplicationCall.bearerTokenOrThrow(action: String): String =
  * Returns the NAVident (user's employee ID) from the `NAVident` private claim in the incoming Bearer token,
  * or null if there is no Authorization header or if the claim is missing.
  */
-public val ApplicationCall.navIdent: String?
+public val ApplicationCall.navIdent: NavIdent?
     get() =
-        bearerToken?.let {
-            JWT.decode(it).claims[JWT_CLAIM_NAVIDENT]?.asString()
+        bearerToken?.let { token ->
+            JWT
+                .decode(token)
+                .claims[JWT_CLAIM_NAVIDENT]
+                ?.asString()
+                ?.let { NavIdent(it) }
         }
 
 /**
  * Returns the NAVident (user's employee ID) from the `NAVident` private claim in the incoming Bearer token.
  * @throws [IllegalArgumentException] if there is no Authorization header or if the claim is missing.
  */
-public fun ApplicationCall.navIdentOrThrow(): String =
+public fun ApplicationCall.navIdentOrThrow(): NavIdent =
     requireNotNull(navIdent) {
         "Missing token or $JWT_CLAIM_NAVIDENT claim in token."
     }
@@ -59,7 +64,7 @@ public fun ApplicationCall.navIdentOrThrow(): String =
  * @param action Short description of the action being performed, used in error messages.
  * @throws [IllegalArgumentException] if there is no Authorization header or if the claim is missing.
  */
-public fun ApplicationCall.navIdentOrThrow(action: String): String =
+public fun ApplicationCall.navIdentOrThrow(action: String): NavIdent =
     requireNotNull(navIdent) {
         "Failed to $action: Missing token or $JWT_CLAIM_NAVIDENT claim in token."
     }

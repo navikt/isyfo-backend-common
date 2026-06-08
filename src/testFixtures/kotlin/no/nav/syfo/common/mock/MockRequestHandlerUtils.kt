@@ -1,16 +1,12 @@
-package no.nav.syfo.common.testhelper
+package no.nav.syfo.common.mock
 
-import io.ktor.client.engine.mock.MockRequestHandleScope
-import io.ktor.client.engine.mock.respond
-import io.ktor.client.engine.mock.toByteArray
-import io.ktor.client.request.HttpRequestData
-import io.ktor.client.request.HttpResponseData
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.headersOf
+import io.ktor.client.engine.mock.*
+import io.ktor.client.request.*
+import io.ktor.http.*
 import no.nav.syfo.common.util.configuredJacksonMapper
 
-val mapper = configuredJacksonMapper()
+@PublishedApi
+internal val mapper = configuredJacksonMapper()
 
 fun <T> MockRequestHandleScope.respond(
     body: T,
