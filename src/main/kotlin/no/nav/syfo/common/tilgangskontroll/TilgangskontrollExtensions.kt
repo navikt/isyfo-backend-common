@@ -2,7 +2,6 @@ package no.nav.syfo.common.tilgangskontroll
 
 import io.ktor.server.routing.RoutingContext
 import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
-import no.nav.syfo.common.types.ident.NavIdent
 import no.nav.syfo.common.types.ident.PersonIdent
 import no.nav.syfo.common.util.bearerTokenOrThrow
 import no.nav.syfo.common.util.callIdOrGenerate
@@ -94,7 +93,7 @@ public suspend fun RoutingContext.checkPersonAndSyfoTilgang(
         block(
             AuthorizedUser(
                 token = token,
-                navIdentProvider = { NavIdent(call.navIdentOrThrow(action)) },
+                navIdentProvider = { call.navIdentOrThrow(action) },
             ),
             personIdent,
             callId,

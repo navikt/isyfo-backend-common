@@ -10,7 +10,7 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.common.http.commonConfig
-import no.nav.syfo.common.testhelper.respond
+import no.nav.syfo.common.mock.respond
 import no.nav.syfo.common.token.OboTokenProvider
 import no.nav.syfo.common.types.ident.PersonIdent
 import no.nav.syfo.common.util.ClientConfig
