@@ -12,6 +12,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.syfo.common.http.commonConfig
 import no.nav.syfo.common.testhelper.respond
 import no.nav.syfo.common.token.OboTokenProvider
+import no.nav.syfo.common.types.ident.PersonIdent
 import no.nav.syfo.common.util.ClientConfig
 import no.nav.syfo.common.util.NAV_CALL_ID_HEADER
 import no.nav.syfo.common.util.NAV_PERSONIDENT_HEADER
@@ -31,7 +32,7 @@ class TilgangskontrollClientTest {
     private val token = "token"
     private val oboToken = "obo-token"
     private val callId = "call-id"
-    private val personIdent = "12345678910"
+    private val personIdent = PersonIdent("12345678910")
     private val clientConfig =
         ClientConfig(
             baseUrl = "isTilgangskontrollUrl",
@@ -84,7 +85,7 @@ class TilgangskontrollClientTest {
         }
 
         assertEquals(bearerHeader(oboToken), authorizationHeader)
-        assertEquals(personIdent, personIdentHeader)
+        assertEquals(personIdent.value, personIdentHeader)
         assertEquals(callId, callIdHeader)
     }
 

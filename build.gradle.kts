@@ -1,5 +1,5 @@
 group = "no.nav.syfo"
-version = "0.0.45"
+version = "0.0.46"
 description = "Shared Kotlin utility library for iSyfo backend Ktor services."
 
 plugins {
