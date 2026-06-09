@@ -1,4 +1,4 @@
-package no.nav.syfo.common.mock
+package no.nav.syfo.common.mock.tilgangskontroll
 
 /**
  * Mock response for the istilgangskontroll `erGodkjent` endpoint.

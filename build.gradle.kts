@@ -1,5 +1,5 @@
 group = "no.nav.syfo"
-version = "0.0.46"
+version = "0.0.47"
 description = "Shared Kotlin utility library for iSyfo backend Ktor services."
 
 plugins {
@@ -37,6 +37,7 @@ dependencies {
     // Test fixtures (published as a separate -test-fixtures artifact); version supplied by the Jackson BOM
     testFixturesImplementation(platform(libs.jackson.bom))
     testFixturesImplementation(libs.jackson.annotations)
+    testFixturesImplementation(libs.ktor.client.mock)
 
     // Tests
     testImplementation(libs.ktor.client.mock)
