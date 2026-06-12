@@ -3,8 +3,8 @@ package no.nav.syfo.common.util
 import com.auth0.jwt.JWT
 import io.ktor.http.*
 import io.ktor.server.application.*
-import no.nav.syfo.common.types.ident.NavIdent
-import no.nav.syfo.common.types.ident.PersonIdent
+import no.nav.syfo.common.types.ident.Navident
+import no.nav.syfo.common.types.ident.Personident
 import org.slf4j.LoggerFactory
 
 private val log = LoggerFactory.getLogger("no.nav.syfo.common.util")
@@ -40,22 +40,22 @@ public fun ApplicationCall.bearerTokenOrThrow(action: String): String =
  * Returns the NAVident (user's employee ID) from the `NAVident` private claim in the incoming Bearer token,
  * or null if there is no Authorization header or if the claim is missing.
  */
-public val ApplicationCall.navIdent: NavIdent?
+public val ApplicationCall.navident: Navident?
     get() =
         bearerToken?.let { token ->
             JWT
                 .decode(token)
                 .claims[JWT_CLAIM_NAVIDENT]
                 ?.asString()
-                ?.let { NavIdent(it) }
+                ?.let { Navident(it) }
         }
 
 /**
  * Returns the NAVident (user's employee ID) from the `NAVident` private claim in the incoming Bearer token.
  * @throws [IllegalArgumentException] if there is no Authorization header or if the claim is missing.
  */
-public fun ApplicationCall.navIdentOrThrow(): NavIdent =
-    requireNotNull(navIdent) {
+public fun ApplicationCall.navidentOrThrow(): Navident =
+    requireNotNull(navident) {
         "Missing token or $JWT_CLAIM_NAVIDENT claim in token."
     }
 
@@ -64,40 +64,40 @@ public fun ApplicationCall.navIdentOrThrow(): NavIdent =
  * @param action Short description of the action being performed, used in error messages.
  * @throws [IllegalArgumentException] if there is no Authorization header or if the claim is missing.
  */
-public fun ApplicationCall.navIdentOrThrow(action: String): NavIdent =
-    requireNotNull(navIdent) {
+public fun ApplicationCall.navidentOrThrow(action: String): Navident =
+    requireNotNull(navident) {
         "Failed to $action: Missing token or $JWT_CLAIM_NAVIDENT claim in token."
     }
 
 /**
- * Returns the value of the `nav-personident` request header as a [PersonIdent], or null if not present.
+ * Returns the value of the `nav-personident` request header as a [Personident], or null if not present.
  * The header is used to carry the Norwegian national identity number (fødselsnummer/D-nummer)
  * of the citizen a request concerns.
- * @throws [IllegalArgumentException] if the header is present but not a valid [PersonIdent].
+ * @throws [IllegalArgumentException] if the header is present but not a valid [Personident].
  */
-public val ApplicationCall.personIdent: PersonIdent?
-    get() = this.request.headers[NAV_PERSONIDENT_HEADER]?.let { PersonIdent(it) }
+public val ApplicationCall.personident: Personident?
+    get() = this.request.headers[NAV_PERSONIDENT_HEADER]?.let { Personident(it) }
 
 /**
- * Returns the value of the `nav-personident` request header as a [PersonIdent].
+ * Returns the value of the `nav-personident` request header as a [Personident].
  * The header is used to carry the Norwegian national identity number (fødselsnummer/D-nummer)
  * of the citizen a request concerns.
- * @throws [IllegalArgumentException] if the header is absent or not a valid [PersonIdent].
+ * @throws [IllegalArgumentException] if the header is absent or not a valid [Personident].
  */
-public fun ApplicationCall.personIdentOrThrow(): PersonIdent =
-    requireNotNull(personIdent) {
+public fun ApplicationCall.personidentOrThrow(): Personident =
+    requireNotNull(personident) {
         "No $NAV_PERSONIDENT_HEADER header supplied."
     }
 
 /**
- * Returns the value of the `nav-personident` request header as a [PersonIdent].
+ * Returns the value of the `nav-personident` request header as a [Personident].
  * The header is used to carry the Norwegian national identity number (fødselsnummer/D-nummer)
  * of the citizen a request concerns.
  * @param action Short description of the action being performed, used in error messages.
- * @throws [IllegalArgumentException] if the header is absent or not a valid [PersonIdent].
+ * @throws [IllegalArgumentException] if the header is absent or not a valid [Personident].
  */
-public fun ApplicationCall.personIdentOrThrow(action: String): PersonIdent =
-    requireNotNull(personIdent) {
+public fun ApplicationCall.personidentOrThrow(action: String): Personident =
+    requireNotNull(personident) {
         "Failed to $action: No $NAV_PERSONIDENT_HEADER header supplied."
     }
 

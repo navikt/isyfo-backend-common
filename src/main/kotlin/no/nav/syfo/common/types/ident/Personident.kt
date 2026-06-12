@@ -3,12 +3,12 @@ package no.nav.syfo.common.types.ident
 import java.util.UUID
 
 @JvmInline
-public value class PersonIdent(
+public value class Personident(
     public val value: String,
 ) {
     init {
         require(elevenDigits.matches(value)) {
-            "Value is not a valid PersonIdent"
+            "Value is not a valid Personident"
         }
     }
 
@@ -18,7 +18,7 @@ public value class PersonIdent(
 }
 
 /**
- * Hashes this [PersonIdent] into a deterministic UUID string for use as a Kafka record key,
+ * Hashes this [Personident] into a deterministic UUID string for use as a Kafka record key,
  * ensuring per-person ordering on the topic without exposing the raw identity number.
  */
-public fun PersonIdent.asProducerRecordKey(): String = UUID.nameUUIDFromBytes(value.toByteArray()).toString()
+public fun Personident.asProducerRecordKey(): String = UUID.nameUUIDFromBytes(value.toByteArray()).toString()

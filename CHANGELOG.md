@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.0.48]
+
+### Changed
+- Rename `PersonIdent` to `Personident`, and `personIdent` parameters to `personident`.
+- Rename `NavIdent` to `Navident`, and `navIdent` parameters to `navident`.
+
 ## [0.0.47]
 
 ### Added

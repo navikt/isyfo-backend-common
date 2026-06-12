@@ -9,18 +9,18 @@ import no.nav.syfo.common.mock.receiveBody
 import no.nav.syfo.common.mock.respond
 import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient.Companion.TILGANGSKONTROLL_BRUKERE_PATH
 import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient.Companion.TILGANGSKONTROLL_PERSON_PATH
-import no.nav.syfo.common.types.ident.NavIdent
-import no.nav.syfo.common.types.ident.PersonIdent
+import no.nav.syfo.common.types.ident.Navident
+import no.nav.syfo.common.types.ident.Personident
 import no.nav.syfo.common.util.JWT_CLAIM_NAVIDENT
 import no.nav.syfo.common.util.NAV_PERSONIDENT_HEADER
 
-private fun HttpRequestData.navIdentFromToken(): NavIdent? =
+private fun HttpRequestData.navidentFromToken(): Navident? =
     headers[HttpHeaders.Authorization]
         ?.removePrefix("Bearer ")
         ?.let { token ->
             runCatching { JWT.decode(token).claims[JWT_CLAIM_NAVIDENT]?.asString() }
                 .getOrNull()
-                ?.let { NavIdent(it) }
+                ?.let { Navident(it) }
         }
 
 /**
@@ -39,13 +39,13 @@ enum class MockUserSyfoTilgangLevel {
  *   Use [MockUserSyfoTilgangLevel.NONE] to simulate a user with no Syfo tilgang,
  *   [MockUserSyfoTilgangLevel.READ] to simulate user with Syfo lesetilgang, or
  *   [MockUserSyfoTilgangLevel.FULL] to simulate user with Syfo full tilgang (both read and write).
- * @property personsUserHasAccessTo The set of [PersonIdent]s this user is permitted to access.
+ * @property personsUserHasAccessTo The set of [Personident]s this user is permitted to access.
  *   Only persons in this set will be returned or approved when access is checked,
  *   provided [syfoTilgangLevel] is not [MockUserSyfoTilgangLevel.NONE].
  */
 data class MockUserTilgangDetails(
     val syfoTilgangLevel: MockUserSyfoTilgangLevel,
-    val personsUserHasAccessTo: Set<PersonIdent>, // person idents this user has access to
+    val personsUserHasAccessTo: Set<Personident>, // person idents this user has access to
 )
 
 /**
@@ -57,21 +57,21 @@ data class MockUserTilgangDetails(
  * - [TILGANGSKONTROLL_BRUKERE_PATH] — filters a list of person idents down to those the user has access to.
  *
  * Access is resolved by extracting the `NAVident` claim from the Bearer token in the request,
- * then looking up the veileder's [MockUserTilgangDetails] in [tilgangDetailsPerNavIdent].
+ * then looking up the veileder's [MockUserTilgangDetails] in [tilgangDetailsPerNavident].
  * If the veileder is unknown or has [MockUserSyfoTilgangLevel.NONE], access is denied.
  */
 public fun MockRequestHandleScope.mockTilgangskontrollRequestHandler(
     request: HttpRequestData,
-    tilgangDetailsPerNavIdent: Map<NavIdent, MockUserTilgangDetails>,
+    tilgangDetailsPerNavident: Map<Navident, MockUserTilgangDetails>,
 ): HttpResponseData {
     val requestUrl = request.url.encodedPath
-    val navIdent = request.navIdentFromToken()
-    val userTilgangDetails = navIdent?.let { tilgangDetailsPerNavIdent[it] }
+    val navident = request.navidentFromToken()
+    val userTilgangDetails = navident?.let { tilgangDetailsPerNavident[it] }
 
     return when {
         requestUrl.endsWith(TILGANGSKONTROLL_PERSON_PATH) -> {
-            val personIdent =
-                request.headers[NAV_PERSONIDENT_HEADER]?.let { PersonIdent(it) }
+            val personident =
+                request.headers[NAV_PERSONIDENT_HEADER]?.let { Personident(it) }
                     ?: return respondError(HttpStatusCode.BadRequest)
 
             if (userTilgangDetails == null) {
@@ -79,7 +79,7 @@ public fun MockRequestHandleScope.mockTilgangskontrollRequestHandler(
             }
 
             val hasSyfoTilgang = userTilgangDetails.syfoTilgangLevel != MockUserSyfoTilgangLevel.NONE
-            val hasAccessToPerson = personIdent in userTilgangDetails.personsUserHasAccessTo
+            val hasAccessToPerson = personident in userTilgangDetails.personsUserHasAccessTo
 
             respond(
                 MockTilgangResponse(
@@ -90,15 +90,15 @@ public fun MockRequestHandleScope.mockTilgangskontrollRequestHandler(
         }
 
         requestUrl.endsWith(TILGANGSKONTROLL_BRUKERE_PATH) -> {
-            val personIdentsToFilter =
-                runBlocking<List<String>> { request.receiveBody() }.toList().map { PersonIdent(it) }
+            val personidentsToFilter =
+                runBlocking<List<String>> { request.receiveBody() }.toList().map { Personident(it) }
 
             if (userTilgangDetails == null || userTilgangDetails.syfoTilgangLevel == MockUserSyfoTilgangLevel.NONE) {
                 return respond(emptyList<String>())
             }
 
             val filteredPersonsUserHasAccessTo =
-                personIdentsToFilter.filter { it in userTilgangDetails.personsUserHasAccessTo }
+                personidentsToFilter.filter { it in userTilgangDetails.personsUserHasAccessTo }
 
             respond(filteredPersonsUserHasAccessTo.map { it.value })
         }
