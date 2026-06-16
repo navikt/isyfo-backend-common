@@ -11,7 +11,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.syfo.common.http.commonConfig
 import no.nav.syfo.common.mock.respond
 import no.nav.syfo.common.token.OboTokenProvider
-import no.nav.syfo.common.types.ident.PersonIdent
+import no.nav.syfo.common.types.ident.Personident
 import no.nav.syfo.common.util.ClientConfig
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -29,8 +29,8 @@ class FilterPersonsUserHasAccessToTest {
     private val token = "token"
     private val oboToken = "obo-token"
     private val callId = "call-id"
-    private val personIdenter =
-        listOf(PersonIdent("12345678910"), PersonIdent("10987654321"), PersonIdent("11223344556"))
+    private val personidenter =
+        listOf(Personident("12345678910"), Personident("10987654321"), Personident("11223344556"))
     private val config =
         ClientConfig(
             baseUrl = "isTilgangskontrollUrl",
@@ -52,35 +52,35 @@ class FilterPersonsUserHasAccessToTest {
 
     @Test
     fun `filterPersonsUserHasAccessTo returns filtered list when access is granted`() {
-        val filteredPersonidenter = listOf(PersonIdent("12345678910"), PersonIdent("10987654321"))
-        val client = createMockTilgangskontrollClientForFilterPersonsResponse(filteredPersonidenter, HttpStatusCode.OK)
+        val filteredPersonidenters = listOf(Personident("12345678910"), Personident("10987654321"))
+        val client = createMockTilgangskontrollClientForFilterPersonsResponse(filteredPersonidenters, HttpStatusCode.OK)
 
         val result =
             runBlocking {
                 client.filterPersonsUserHasAccessTo(
-                    personIdenter = personIdenter,
+                    personidenter = personidenter,
                     token = token,
                     callId = callId,
                 )
             }
 
-        assertEquals(filteredPersonidenter, result)
+        assertEquals(filteredPersonidenters, result)
     }
 
     @Test
     fun `personsUserHasAccessTo returns full list when all persons are accessible`() {
-        val client = createMockTilgangskontrollClientForFilterPersonsResponse(personIdenter, HttpStatusCode.OK)
+        val client = createMockTilgangskontrollClientForFilterPersonsResponse(personidenter, HttpStatusCode.OK)
 
         val result =
             runBlocking {
                 client.filterPersonsUserHasAccessTo(
-                    personIdenter = personIdenter,
+                    personidenter = personidenter,
                     token = token,
                     callId = callId,
                 )
             }
 
-        assertEquals(personIdenter, result)
+        assertEquals(personidenter, result)
     }
 
     @Test
@@ -90,13 +90,13 @@ class FilterPersonsUserHasAccessToTest {
         val result =
             runBlocking {
                 client.filterPersonsUserHasAccessTo(
-                    personIdenter = personIdenter,
+                    personidenter = personidenter,
                     token = token,
                     callId = callId,
                 )
             }
 
-        assertEquals(emptyList<PersonIdent>(), result)
+        assertEquals(emptyList<Personident>(), result)
     }
 
     @Test
@@ -106,7 +106,7 @@ class FilterPersonsUserHasAccessToTest {
         val result =
             runBlocking {
                 client.filterPersonsUserHasAccessTo(
-                    personIdenter = personIdenter,
+                    personidenter = personidenter,
                     token = token,
                     callId = callId,
                 )
@@ -122,7 +122,7 @@ class FilterPersonsUserHasAccessToTest {
         val result =
             runBlocking {
                 client.filterPersonsUserHasAccessTo(
-                    personIdenter = personIdenter,
+                    personidenter = personidenter,
                     token = token,
                     callId = callId,
                 )
@@ -138,7 +138,7 @@ class FilterPersonsUserHasAccessToTest {
         val result =
             runBlocking {
                 client.filterPersonsUserHasAccessTo(
-                    personIdenter = personIdenter,
+                    personidenter = personidenter,
                     token = token,
                     callId = callId,
                 )
@@ -154,22 +154,22 @@ class FilterPersonsUserHasAccessToTest {
         val result =
             runBlocking {
                 client.filterPersonsUserHasAccessTo(
-                    personIdenter = emptyList(),
+                    personidenter = emptyList(),
                     token = token,
                     callId = callId,
                 )
             }
 
-        assertEquals(emptyList<PersonIdent>(), result)
+        assertEquals(emptyList<Personident>(), result)
     }
 
     @Test
     fun `personsUserHasAccessTo calls obo token exchange before making request`() {
-        val client = createMockTilgangskontrollClientForFilterPersonsResponse(personIdenter, HttpStatusCode.OK)
+        val client = createMockTilgangskontrollClientForFilterPersonsResponse(personidenter, HttpStatusCode.OK)
 
         runBlocking {
             client.filterPersonsUserHasAccessTo(
-                personIdenter = personIdenter,
+                personidenter = personidenter,
                 token = token,
                 callId = callId,
             )
@@ -189,13 +189,13 @@ class FilterPersonsUserHasAccessToTest {
             oboTokenProvider.getOnBehalfOfToken(any(), any())
         } returns null
 
-        val client = createMockTilgangskontrollClientForFilterPersonsResponse(personIdenter, HttpStatusCode.OK)
+        val client = createMockTilgangskontrollClientForFilterPersonsResponse(personidenter, HttpStatusCode.OK)
 
         val exception =
             org.junit.jupiter.api.Assertions.assertThrows(RuntimeException::class.java) {
                 runBlocking {
                     client.filterPersonsUserHasAccessTo(
-                        personIdenter = personIdenter,
+                        personidenter = personidenter,
                         token = token,
                         callId = callId,
                     )
@@ -206,7 +206,7 @@ class FilterPersonsUserHasAccessToTest {
     }
 
     private fun createMockTilgangskontrollClientForFilterPersonsResponse(
-        response: List<PersonIdent>?,
+        response: List<Personident>?,
         status: HttpStatusCode,
     ): TilgangskontrollClient {
         val httpClient =

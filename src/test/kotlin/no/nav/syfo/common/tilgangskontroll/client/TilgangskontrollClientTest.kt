@@ -12,7 +12,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.syfo.common.http.commonConfig
 import no.nav.syfo.common.mock.respond
 import no.nav.syfo.common.token.OboTokenProvider
-import no.nav.syfo.common.types.ident.PersonIdent
+import no.nav.syfo.common.types.ident.Personident
 import no.nav.syfo.common.util.ClientConfig
 import no.nav.syfo.common.util.NAV_CALL_ID_HEADER
 import no.nav.syfo.common.util.NAV_PERSONIDENT_HEADER
@@ -32,7 +32,7 @@ class TilgangskontrollClientTest {
     private val token = "token"
     private val oboToken = "obo-token"
     private val callId = "call-id"
-    private val personIdent = PersonIdent("12345678910")
+    private val personident = Personident("12345678910")
     private val clientConfig =
         ClientConfig(
             baseUrl = "isTilgangskontrollUrl",
@@ -55,7 +55,7 @@ class TilgangskontrollClientTest {
     @Test
     fun `hasAccess returns true when tilgang is approved and sends expected headers to istilgangskontroll`() {
         lateinit var authorizationHeader: String
-        lateinit var personIdentHeader: String
+        lateinit var personidentHeader: String
         lateinit var callIdHeader: String
 
         // In order to intercept the headers that istilgangskontroll would be called with, this test
@@ -66,7 +66,7 @@ class TilgangskontrollClientTest {
                 engine {
                     addHandler { request ->
                         authorizationHeader = request.headers[HttpHeaders.Authorization].orEmpty()
-                        personIdentHeader = request.headers[NAV_PERSONIDENT_HEADER].orEmpty()
+                        personidentHeader = request.headers[NAV_PERSONIDENT_HEADER].orEmpty()
                         callIdHeader = request.headers[NAV_CALL_ID_HEADER].orEmpty()
                         respond(Tilgang(erGodkjent = true))
                     }
@@ -81,11 +81,11 @@ class TilgangskontrollClientTest {
             )
 
         runBlocking {
-            assertTrue(client.hasAccess(callId, personIdent, token))
+            assertTrue(client.hasAccess(callId, personident, token))
         }
 
         assertEquals(bearerHeader(oboToken), authorizationHeader)
-        assertEquals(personIdent.value, personIdentHeader)
+        assertEquals(personident.value, personidentHeader)
         assertEquals(callId, callIdHeader)
     }
 
@@ -94,8 +94,8 @@ class TilgangskontrollClientTest {
         val client = createMockClientForResponse(Tilgang(erGodkjent = true, fullTilgang = true))
 
         runBlocking {
-            assertTrue(client.hasAccess(callId, personIdent, token))
-            assertTrue(client.hasWriteAccess(callId, personIdent, token))
+            assertTrue(client.hasAccess(callId, personident, token))
+            assertTrue(client.hasWriteAccess(callId, personident, token))
         }
     }
 
@@ -104,8 +104,8 @@ class TilgangskontrollClientTest {
         val client = createMockClientForResponse(Tilgang(erGodkjent = true, fullTilgang = false))
 
         runBlocking {
-            assertTrue(client.hasAccess(callId, personIdent, token))
-            assertFalse(client.hasWriteAccess(callId, personIdent, token))
+            assertTrue(client.hasAccess(callId, personident, token))
+            assertFalse(client.hasWriteAccess(callId, personident, token))
         }
     }
 
@@ -114,8 +114,8 @@ class TilgangskontrollClientTest {
         val client = createMockClientForResponse(Tilgang(erGodkjent = false, fullTilgang = true))
 
         runBlocking {
-            assertFalse(client.hasAccess(callId, personIdent, token))
-            assertFalse(client.hasWriteAccess(callId, personIdent, token))
+            assertFalse(client.hasAccess(callId, personident, token))
+            assertFalse(client.hasWriteAccess(callId, personident, token))
         }
     }
 
@@ -124,8 +124,8 @@ class TilgangskontrollClientTest {
         val client = createMockClientForResponse(status = HttpStatusCode.InternalServerError)
 
         runBlocking {
-            assertFalse(client.hasAccess(callId, personIdent, token))
-            assertFalse(client.hasWriteAccess(callId, personIdent, token))
+            assertFalse(client.hasAccess(callId, personident, token))
+            assertFalse(client.hasWriteAccess(callId, personident, token))
         }
     }
 
@@ -139,12 +139,12 @@ class TilgangskontrollClientTest {
 
         assertThrows(RuntimeException::class.java) {
             runBlocking {
-                client.hasAccess(callId, personIdent, token)
+                client.hasAccess(callId, personident, token)
             }
         }
         assertThrows(RuntimeException::class.java) {
             runBlocking {
-                client.hasWriteAccess(callId, personIdent, token)
+                client.hasWriteAccess(callId, personident, token)
             }
         }
     }

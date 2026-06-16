@@ -20,7 +20,7 @@ In route handlers, it is easiest to check tilgangskontroll through the `RoutingC
 
 ### `checkPersonAndSyfoTilgang`
 
-Checks that the user has populasjonstilgang to a specific person and the required Modia SYFO fagtilgang. If the checks pass, the `block` handler is executed with the authorized user (`AuthorizedUser`, carrying the token and a lazily-resolved `navIdent`), the validated `personIdent`, and the `callId`.
+Checks that the user has populasjonstilgang to a specific person and the required Modia SYFO fagtilgang. If the checks pass, the `block` handler is executed with the authorized user (`AuthorizedUser`, carrying the token and a lazily-resolved `navident`), the validated `personident`, and the `callId`.
 
 One overload reads `nav-personident` from the request header:
 
@@ -30,17 +30,17 @@ get("/person") {
         action = "read person",
         tilgangskontrollClient = tilgangskontrollClient,
         requiresWriteAccess = false, // false by default
-    ) { authorizedUser, targetPersonIdent, callId ->
+    ) { authorizedUser, targetPersonident, callId ->
         callOtherService(authorizedUser.token, callId)
         
-        getThing(authorizedUser.navIdent, targetPersonIdent)
+        getThing(authorizedUser.navident, targetPersonident)
         
         call.respond(HttpStatusCode.OK)
     }
 }
 ```
 
-Another overload takes `personIdent` as an explicit `PersonIdent` parameter (e.g. when read from the request body):
+Another overload takes `personident` as an explicit `Personident` parameter (e.g. when read from the request body):
 
 ```kotlin
 post("/person") {
@@ -48,11 +48,11 @@ post("/person") {
     
     checkPersonAndSyfoTilgang(
         action = "write person",
-        personIdent = PersonIdent(requestDTO.personIdent),
+        personident = Personident(requestDTO.personident),
         tilgangskontrollClient = tilgangskontrollClient,
         requiresWriteAccess = true,
-    ) { authorizedUser, targetPersonIdent ->
-        createThing(authorizedUser.navIdent, targetPersonIdent)
+    ) { authorizedUser, targetPersonident ->
+        createThing(authorizedUser.navident, targetPersonident)
         
         call.respond(HttpStatusCode.Created)
     }
@@ -64,7 +64,7 @@ giving that level of access to Modia SYFO.
 
 Required request headers:
 - `Authorization: Bearer <token>`
-- `nav-personident` (if not providing personIdent as argument)
+- `nav-personident` (if not providing personident as argument)
 - Will try to read `Nav-Call-Id` header, but will not throw if it's missing.
 
 ### `filterPersonsUserHasAccessTo`
@@ -73,12 +73,12 @@ Returns the subset of a list of persons that the veileder has access to. Returns
 
 ```kotlin
 get("/persons") {
-    val accessiblePersonIdenter = filterPersonsUserHasAccessTo(
+    val accessiblePersonidenter = filterPersonsUserHasAccessTo(
         action = "filter persons",
-        personIdenter = listOf("12345678910", "10987654321"),
+        personidenter = listOf("12345678910", "10987654321"),
         tilgangskontrollClient = tilgangskontrollClient,
     )
-    call.respond(accessiblePersonIdenter ?: emptyList())
+    call.respond(accessiblePersonidenter ?: emptyList())
 }
 ```
 
@@ -95,18 +95,18 @@ If you need to check access outside of a Ktor route handler, use `Tilgangskontro
 ```kotlin
 val hasReadAccess = tilgangskontrollClient.hasAccess(
     callId = "call-id",
-    personIdent = PersonIdent("12345678910"),
+    personident = Personident("12345678910"),
     token = incomingToken,
 )
 
 val hasWriteAccess = tilgangskontrollClient.hasWriteAccess(
     callId = "call-id",
-    personIdent = PersonIdent("12345678910"),
+    personident = Personident("12345678910"),
     token = incomingToken,
 )
 
-val accessiblePersonIdenter: List<PersonIdent>? = tilgangskontrollClient.filterPersonsUserHasAccessTo(
-    personIdenter = listOf(PersonIdent("12345678910"), PersonIdent("10987654321")),
+val accessiblePersonidenter: List<Personident>? = tilgangskontrollClient.filterPersonsUserHasAccessTo(
+    personidenter = listOf(Personident("12345678910"), Personident("10987654321")),
     token = incomingToken,
     callId = "call-id",
 )

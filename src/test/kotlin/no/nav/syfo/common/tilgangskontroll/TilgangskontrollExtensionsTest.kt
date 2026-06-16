@@ -12,7 +12,7 @@ import io.mockk.mockk
 import io.mockk.registerInstanceFactory
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
-import no.nav.syfo.common.types.ident.PersonIdent
+import no.nav.syfo.common.types.ident.Personident
 import no.nav.syfo.common.util.NAV_CALL_ID_HEADER
 import no.nav.syfo.common.util.NAV_PERSONIDENT_HEADER
 import no.nav.syfo.common.util.bearerHeader
@@ -23,14 +23,14 @@ import org.junit.jupiter.api.Test
 class TilgangskontrollExtensionsTest {
     private val action = "read aktivitetskrav"
     private val callId = "123"
-    private val personIdent = PersonIdent("12345678910")
+    private val personident = Personident("12345678910")
     private val token = "token"
 
     private val tilgangskontrollClient = mockk<TilgangskontrollClient>()
 
     @BeforeEach
     fun setup() {
-        registerInstanceFactory { personIdent }
+        registerInstanceFactory { personident }
     }
 
     @Test
@@ -40,37 +40,37 @@ class TilgangskontrollExtensionsTest {
                 headers =
                     Headers.build {
                         append(NAV_CALL_ID_HEADER, callId)
-                        append(NAV_PERSONIDENT_HEADER, personIdent.value)
+                        append(NAV_PERSONIDENT_HEADER, personident.value)
                         append(HttpHeaders.Authorization, bearerHeader(token))
                     },
             )
         var blockCalled = false
         var blockToken: String? = null
-        var blockPersonIdent: PersonIdent? = null
+        var blockPersonident: Personident? = null
         var blockCallId: String? = null
 
         coEvery {
-            tilgangskontrollClient.hasAccess(callId, personIdent, token)
+            tilgangskontrollClient.hasAccess(callId, personident, token)
         } returns true
 
         runBlocking {
             routingContext.checkPersonAndSyfoTilgang(
                 action = action,
                 tilgangskontrollClient = tilgangskontrollClient,
-            ) { authorized, targetPersonIdent, blockCallIdArg ->
+            ) { authorized, targetPersonident, blockCallIdArg ->
                 blockCalled = true
                 blockToken = authorized.token
-                blockPersonIdent = targetPersonIdent
+                blockPersonident = targetPersonident
                 blockCallId = blockCallIdArg
             }
         }
 
         Assertions.assertTrue(blockCalled)
         Assertions.assertEquals(token, blockToken)
-        Assertions.assertEquals(personIdent, blockPersonIdent)
+        Assertions.assertEquals(personident, blockPersonident)
         Assertions.assertEquals(callId, blockCallId)
         coVerify(exactly = 1) {
-            tilgangskontrollClient.hasAccess(callId, personIdent, token)
+            tilgangskontrollClient.hasAccess(callId, personident, token)
         }
         coVerify(exactly = 0) {
             tilgangskontrollClient.hasWriteAccess(any(), any(), any())
@@ -84,14 +84,14 @@ class TilgangskontrollExtensionsTest {
                 headers =
                     Headers.build {
                         append(NAV_CALL_ID_HEADER, callId)
-                        append(NAV_PERSONIDENT_HEADER, personIdent.value)
+                        append(NAV_PERSONIDENT_HEADER, personident.value)
                         append(HttpHeaders.Authorization, bearerHeader(token))
                     },
             )
         var blockCalled = false
 
         coEvery {
-            tilgangskontrollClient.hasWriteAccess(callId, personIdent, token)
+            tilgangskontrollClient.hasWriteAccess(callId, personident, token)
         } returns true
 
         runBlocking {
@@ -106,7 +106,7 @@ class TilgangskontrollExtensionsTest {
 
         Assertions.assertTrue(blockCalled)
         coVerify(exactly = 1) {
-            tilgangskontrollClient.hasWriteAccess(callId, personIdent, token)
+            tilgangskontrollClient.hasWriteAccess(callId, personident, token)
         }
         coVerify(exactly = 0) {
             tilgangskontrollClient.hasAccess(any(), any(), any())
@@ -120,14 +120,14 @@ class TilgangskontrollExtensionsTest {
                 headers =
                     Headers.build {
                         append(NAV_CALL_ID_HEADER, callId)
-                        append(NAV_PERSONIDENT_HEADER, personIdent.value)
+                        append(NAV_PERSONIDENT_HEADER, personident.value)
                         append(HttpHeaders.Authorization, bearerHeader(token))
                     },
             )
         var blockCalled = false
 
         coEvery {
-            tilgangskontrollClient.hasAccess(callId, personIdent, token)
+            tilgangskontrollClient.hasAccess(callId, personident, token)
         } returns false
 
         Assertions.assertThrows(TilgangDeniedException::class.java) {
@@ -143,7 +143,7 @@ class TilgangskontrollExtensionsTest {
 
         Assertions.assertFalse(blockCalled)
         coVerify(exactly = 1) {
-            tilgangskontrollClient.hasAccess(callId, personIdent, token)
+            tilgangskontrollClient.hasAccess(callId, personident, token)
         }
     }
 
@@ -154,7 +154,7 @@ class TilgangskontrollExtensionsTest {
                 headers =
                     Headers.build {
                         append(NAV_CALL_ID_HEADER, callId)
-                        append(NAV_PERSONIDENT_HEADER, personIdent.value)
+                        append(NAV_PERSONIDENT_HEADER, personident.value)
                     },
             )
 
@@ -176,7 +176,7 @@ class TilgangskontrollExtensionsTest {
     }
 
     @Test
-    fun `throws illegal argument when personIdent header is missing`() {
+    fun `throws illegal argument when personident header is missing`() {
         val routingContext =
             routingContextWithHeaders(
                 headers =
@@ -204,7 +204,7 @@ class TilgangskontrollExtensionsTest {
     }
 
     @Test
-    fun `explicit personIdent - calls hasAccess and executes block when read access is granted`() {
+    fun `explicit personident - calls hasAccess and executes block when read access is granted`() {
         val routingContext =
             routingContextWithHeaders(
                 headers =
@@ -216,13 +216,13 @@ class TilgangskontrollExtensionsTest {
         var blockCalled = false
 
         coEvery {
-            tilgangskontrollClient.hasAccess(callId, personIdent, token)
+            tilgangskontrollClient.hasAccess(callId, personident, token)
         } returns true
 
         runBlocking {
             routingContext.checkPersonAndSyfoTilgang(
                 action = action,
-                personIdent = personIdent,
+                personident = personident,
                 tilgangskontrollClient = tilgangskontrollClient,
             ) { _, _, _ ->
                 blockCalled = true
@@ -231,12 +231,12 @@ class TilgangskontrollExtensionsTest {
 
         Assertions.assertTrue(blockCalled)
         coVerify(exactly = 1) {
-            tilgangskontrollClient.hasAccess(callId, personIdent, token)
+            tilgangskontrollClient.hasAccess(callId, personident, token)
         }
     }
 
     @Test
-    fun `explicit personIdent - calls hasWriteAccess and executes block when write access is granted`() {
+    fun `explicit personident - calls hasWriteAccess and executes block when write access is granted`() {
         val routingContext =
             routingContextWithHeaders(
                 headers =
@@ -248,13 +248,13 @@ class TilgangskontrollExtensionsTest {
         var blockCalled = false
 
         coEvery {
-            tilgangskontrollClient.hasWriteAccess(callId, personIdent, token)
+            tilgangskontrollClient.hasWriteAccess(callId, personident, token)
         } returns true
 
         runBlocking {
             routingContext.checkPersonAndSyfoTilgang(
                 action = action,
-                personIdent = personIdent,
+                personident = personident,
                 tilgangskontrollClient = tilgangskontrollClient,
                 requiresWriteAccess = true,
             ) { _, _, _ ->
@@ -264,12 +264,12 @@ class TilgangskontrollExtensionsTest {
 
         Assertions.assertTrue(blockCalled)
         coVerify(exactly = 1) {
-            tilgangskontrollClient.hasWriteAccess(callId, personIdent, token)
+            tilgangskontrollClient.hasWriteAccess(callId, personident, token)
         }
     }
 
     @Test
-    fun `explicit personIdent - throws forbidden when access is denied`() {
+    fun `explicit personident - throws forbidden when access is denied`() {
         val routingContext =
             routingContextWithHeaders(
                 headers =
@@ -281,14 +281,14 @@ class TilgangskontrollExtensionsTest {
         var blockCalled = false
 
         coEvery {
-            tilgangskontrollClient.hasAccess(callId, personIdent, token)
+            tilgangskontrollClient.hasAccess(callId, personident, token)
         } returns false
 
         Assertions.assertThrows(TilgangDeniedException::class.java) {
             runBlocking {
                 routingContext.checkPersonAndSyfoTilgang(
                     action = action,
-                    personIdent = personIdent,
+                    personident = personident,
                     tilgangskontrollClient = tilgangskontrollClient,
                 ) { _, _, _ ->
                     blockCalled = true
@@ -300,7 +300,7 @@ class TilgangskontrollExtensionsTest {
     }
 
     @Test
-    fun `explicit personIdent - throws illegal argument when authorization header is missing`() {
+    fun `explicit personident - throws illegal argument when authorization header is missing`() {
         val routingContext =
             routingContextWithHeaders(
                 headers =
@@ -313,7 +313,7 @@ class TilgangskontrollExtensionsTest {
             runBlocking {
                 routingContext.checkPersonAndSyfoTilgang(
                     action = action,
-                    personIdent = personIdent,
+                    personident = personident,
                     tilgangskontrollClient = tilgangskontrollClient,
                 ) { _, _, _ -> }
             }
