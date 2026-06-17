@@ -2,13 +2,13 @@
 jackson = "2.22.0"
 ktor = "3.5.0"
 logback = "1.5.34"
-micrometer = "1.16.5"
+micrometer = "1.17.0"
 mockk = "1.14.11"
 slf4j = "2.0.18"
 junit = "6.1.0"
 
 # Plugin versions
-kotlin = "2.3.21"
+kotlin = "2.4.0"
 ktlint = "14.2.0"
 testLogger = "4.0.0"
 versionsPlugin = "0.54.0"
