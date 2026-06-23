@@ -109,7 +109,7 @@ public fun ApplicationCall.personidentOrThrow(action: String): Personident =
 public fun ApplicationCall.callIdOrGenerate(): String =
     this.request.headers[NAV_CALL_ID_HEADER]
         ?: generateCallId().also {
-            log.warn("Call id header missing in request, generated new call id.")
+            log.debug("Call id header missing in request, generated new call id.")
         }
 
 /**
