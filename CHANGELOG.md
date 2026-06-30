@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.0]
+
+### Changed
+- Bumped version to `1.0.0` to reflect API stability and production readiness. Library is now used and tested in production in some backend apps.
+- Change log level for missing call id header from warning to debug.
+
 ## [0.0.48]
 
 ### Changed
