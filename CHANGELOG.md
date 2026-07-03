@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.1.0]
+
+### Added
+- `DokarkivClient` for journalføring (archiving) documents to `dokarkiv` (Joark) using a system token, shared across iSyfo backend apps. Supports recipients of type person (FNR), virksomhet (ORGNR) and behandler (HPR), and `journalpostType` INNGAAENDE/UTGAAENDE/NOTAT. 409 Conflict is treated as success for idempotent retries.
+- `createJournalpostRequest(...)` builder and public DTOs in `no.nav.syfo.common.journalforing.dto`. Apps supply their own brevkoder via the `Brevkode` interface. Supports `OverstyrInnsynsregler` and `Sak` (GENERELL_SAK / FAGSAK).
+- DTO-level validation of dokarkiv invariants: `avsenderMottaker` presence per `journalpostType` (required for INNGAAENDE/UTGAAENDE, forbidden for NOTAT), `id`/`idType` coupling and digit count per type (FNR 11, ORGNR 9, HPRNR 7-9), and `FAGSAK` requiring `fagsakId` + `fagsaksystem`.
+- `Virksomhetsnummer` value type under `no.nav.syfo.common.types.ident`.
+- `mockDokarkivRequestHandler` / `mockJournalpostResponse` test fixtures.
+
 ## [1.0.0]
 
 ### Changed

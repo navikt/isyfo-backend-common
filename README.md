@@ -13,6 +13,11 @@ Shared Kotlin utility library for iSyfo backend Ktor services. Intended to grow 
 - `TilgangskontrollClient` — read/write access checks against `istilgangskontroll`
 - Ktor `RoutingContext` extension helpers such as `checkPersonAndSyfoTilgang(...)`
 
+### Dokarkiv journalføring
+- `DokarkivClient` — journalfører (archives) documents to `dokarkiv` (Joark) using a system token
+- Supports recipients of type person (FNR), virksomhet (ORGNR) and behandler (HPR)
+- `createJournalpostRequest(...)` builds a `JournalpostRequest`; apps supply their own brevkoder via the `Brevkode` interface
+
 ### Ktor helpers for accessing request data
 `ApplicationCall` extension properties and functions for extracting common request data: Bearer token, `NAVident` and `azp` JWT claims, the `nav-personident` header, and the `Nav-Call-Id` tracing header.
 
@@ -134,5 +139,6 @@ Remove `mavenLocal()` when done testing, or leave it for convenience later.
 
 - [Token providers](docs/token.md) — `EntraIdClient` (Texas) and `AzureAdClient`
 - [Veileder tilgangskontroll](docs/tilgangskontroll.md) — `TilgangskontrollClient` and Ktor helpers
+- [Dokarkiv journalføring](docs/dokarkiv.md) — `DokarkivClient`, `createJournalpostRequest`, `Brevkode`
 - [JWT authentication](docs/auth.md) — `installJwtAuthentication`, `getWellKnown`, `JwtIssuer`
 - [Testing utilities](docs/testing.md) — `MockTilgang`, `MockAzureAdTokenResponse` (test fixtures)
