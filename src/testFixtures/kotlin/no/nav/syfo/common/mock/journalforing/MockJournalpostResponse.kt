@@ -4,7 +4,7 @@ import no.nav.syfo.common.journalforing.JournalpostId
 import no.nav.syfo.common.journalforing.dto.JournalpostResponse
 
 /** Default journalpostId returned by [mockDokarkivRequestHandler]. */
-public const val MOCK_JOURNALPOST_ID: Int = 1
+public const val MOCK_JOURNALPOST_ID: String = "1"
 
 /**
  * Builds a default successful [JournalpostResponse] for use in test mock handlers.

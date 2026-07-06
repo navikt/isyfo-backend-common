@@ -45,7 +45,7 @@ class DokarkivClientTest {
         override val value = "OPPF_TEST_BREVKODE"
     }
 
-    private val journalpostId = JournalpostId(1)
+    private val journalpostId = JournalpostId("1")
     private val journalpostRequest =
         createJournalpostRequest(
             bruker = Bruker(id = personident.value, idType = BrukerIdType.PERSONIDENT.value),

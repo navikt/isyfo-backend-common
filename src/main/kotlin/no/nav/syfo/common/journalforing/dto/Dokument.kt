@@ -15,7 +15,7 @@ public data class Dokument(
  */
 public data class DokumentInfo(
     val brevkode: String? = null,
-    val dokumentInfoId: Int? = null,
+    val dokumentInfoId: String? = null,
     val tittel: String? = null,
 )
 
