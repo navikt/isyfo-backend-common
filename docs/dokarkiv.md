@@ -69,9 +69,9 @@ The DTOs validate dokarkiv's invariants in their `init` blocks (throwing `Illega
 
 ### `journalpostType`
 
-- `INNGAAENDE` — documentation NAV has **received** from an external party (søknader, ettersendelser, meldinger fra arbeidsgivere).
-- `UTGAAENDE` — documentation NAV has **produced and sent** to an external party (informasjons-/vedtaksbrev to persons or organisations).
-- `NOTAT` — documentation NAV produced for itself, not meant to be distributed out of NAV (forvaltningsnotater, telefonnotater).
+- `INNGAAENDE` — documentation Nav has **received** from an external party (søknader, ettersendelser, meldinger fra arbeidsgivere).
+- `UTGAAENDE` — documentation Nav has **produced and sent** to an external party (informasjons-/vedtaksbrev to persons or organisations).
+- `NOTAT` — documentation Nav produced for itself, not meant to be distributed out of Nav (forvaltningsnotater, telefonnotater).
 
 ### `avsenderMottaker`
 
@@ -82,14 +82,14 @@ The DTOs validate dokarkiv's invariants in their `init` blocks (throwing `Illega
 
 ### `kanal`
 
-Optional. `NAV_NO` (Ditt NAV — submitted digitally via self-service on nav.no) or `HELSENETTET` (received via Norsk Helsenett).
+Optional. `NAV_NO` (Ditt Nav — submitted digitally via self-service on nav.no) or `HELSENETTET` (received via Norsk Helsenett).
 
 ### `overstyrInnsynsregler`
 
 Optional. Makes the journalpost and its documents visible to the logged-in citizen on nav.no even when the default rule set would hide them:
 
 - `VISES_MASKINELT_GODKJENT` — a machine process approved showing it.
-- `VISES_MANUELT_GODKJENT` — a NAV employee reviewed and approved showing it.
+- `VISES_MANUELT_GODKJENT` — a Nav employee reviewed and approved showing it.
 
 ### `sak`
 
