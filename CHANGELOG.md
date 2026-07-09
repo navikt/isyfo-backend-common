@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.0]
+
+### Added
+- `DokdistfordelingClient` for ordering distribution of a previously journalført document via `dokdistfordeling`, shared across iSyfo backend apps, using a system token. 409 Conflict (already distributed) is treated as success for idempotent retries.
+- `createDistribuerJournalpostRequest(...)` builder and public DTOs in `no.nav.syfo.common.distribusjon.dto` (`DistribuerJournalpostRequest`, `Adresse`, `DistribuerJournalpostResponse`).
+- DTO-level validation of dokdistfordeling invariants: `distribusjonstype`/`distribusjonstidspunkt`/`tvingKanal` must be known values, `forsendelseMetadata`/`forsendelseMetadataType` required together, and `Adresse` field requirements per `adressetype` (`norskPostadresse` requires `postnummer`/`poststed`; `utenlandskPostadresse` requires `adresselinje1` and forbids `postnummer`/`poststed`).
+
 ## [1.1.0]
 
 ### Added
