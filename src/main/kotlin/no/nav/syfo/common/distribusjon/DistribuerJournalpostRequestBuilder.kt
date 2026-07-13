@@ -22,6 +22,7 @@ import no.nav.syfo.common.distribusjon.dto.Distribusjonstype
 public fun createDistribuerJournalpostRequest(
     journalpostId: String,
     bestillendeFagsystem: String,
+    dokumentProdApp: String,
     distribusjonstype: Distribusjonstype = Distribusjonstype.VEDTAK,
     distribusjonstidspunkt: Distribusjonstidspunkt = Distribusjonstidspunkt.UMIDDELBART,
     batchId: String? = null,
@@ -33,5 +34,6 @@ public fun createDistribuerJournalpostRequest(
         distribusjonstidspunkt = distribusjonstidspunkt.value,
         batchId = batchId,
         bestillendeFagsystem = bestillendeFagsystem,
+        dokumentProdApp = dokumentProdApp,
         adresse = adresse,
     )
