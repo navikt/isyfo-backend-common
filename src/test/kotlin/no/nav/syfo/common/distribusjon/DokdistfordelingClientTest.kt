@@ -39,7 +39,7 @@ class DokdistfordelingClientTest {
         createDistribuerJournalpostRequest(
             journalpostId = "123",
             bestillendeFagsystem = "ISYFO",
-            dokumentProdApp = "isyfo-backend-common"
+            dokumentProdApp = "isyfo-backend-common",
         )
 
     @BeforeEach
