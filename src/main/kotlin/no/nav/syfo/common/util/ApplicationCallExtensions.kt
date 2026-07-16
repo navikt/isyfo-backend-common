@@ -108,9 +108,7 @@ public fun ApplicationCall.personidentOrThrow(action: String): Personident =
  */
 public fun ApplicationCall.callIdOrGenerate(): String =
     this.request.headers[NAV_CALL_ID_HEADER]
-        ?: generateCallId().also {
-            log.debug("Call id header missing in request, generated new call id.")
-        }
+        ?: generateCallId()
 
 /**
  * Returns the `azp` (authorized party) claim from the incoming Bearer token.
