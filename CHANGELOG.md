@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.2]
+
+### Changed
+- Bump `jackson-bom` to 2.22.1.
+- No longer logs when missing call id header
+
 ## [1.2.1]
 
 ### Changed
