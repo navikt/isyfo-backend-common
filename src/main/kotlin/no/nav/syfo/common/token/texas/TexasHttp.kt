@@ -9,12 +9,13 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import no.nav.syfo.common.util.getRequiredEnvVar
 import org.slf4j.LoggerFactory
 
 private val log = LoggerFactory.getLogger("no.nav.syfo.common.token.texas")
 
-private val tokenExchangeEndpoint: String get() = System.getenv("NAIS_TOKEN_EXCHANGE_ENDPOINT")
-private val tokenEndpoint: String get() = System.getenv("NAIS_TOKEN_ENDPOINT")
+private val tokenExchangeEndpoint: String get() = getRequiredEnvVar("NAIS_TOKEN_EXCHANGE_ENDPOINT")
+private val tokenEndpoint: String get() = getRequiredEnvVar("NAIS_TOKEN_ENDPOINT")
 
 internal suspend fun texasOboToken(
     httpClient: HttpClient,
