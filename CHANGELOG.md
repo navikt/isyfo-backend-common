@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.3.0]
+
+### Added
+- `getWellKnownFromEnv()` for building `WellKnown` from Nais-injected Entra ID issuer and JWKS URI environment variables.
+- `getRequiredEnv()` utility for required environment variables.
+
+### Changed
+- Azure AD and Texas token clients now fail fast with the missing environment variable name when required configuration is absent.
+
 ## [1.2.2]
 
 ### Changed
@@ -331,4 +340,3 @@ Maintenance: Replace deprecated URL() parsing constructor with URI() in ApiAuthe
 - `AzureAdClient`, `AzureAdToken`, `AzureAdTokenResponse`, `AzureEnvironment` for Azure AD OBO token exchange.
 - `RequestUtil` with common NAV header constants and helpers.
 - `HttpClientCommon` with `httpClientDefault()` and `httpClientProxy()` preconfigurations.
-

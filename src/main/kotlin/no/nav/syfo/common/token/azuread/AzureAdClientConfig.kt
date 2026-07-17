@@ -1,5 +1,7 @@
 package no.nav.syfo.common.token.azuread
 
+import no.nav.syfo.common.util.getRequiredEnvVar
+
 public data class AzureAdClientConfig(
     val appClientId: String,
     val appClientSecret: String,
@@ -14,10 +16,10 @@ public data class AzureAdClientConfig(
          */
         public fun fromEnv(): AzureAdClientConfig =
             AzureAdClientConfig(
-                appClientId = System.getenv("AZURE_APP_CLIENT_ID"),
-                appClientSecret = System.getenv("AZURE_APP_CLIENT_SECRET"),
-                appWellKnownUrl = System.getenv("AZURE_APP_WELL_KNOWN_URL"),
-                openidConfigTokenEndpoint = System.getenv("AZURE_OPENID_CONFIG_TOKEN_ENDPOINT"),
+                appClientId = getRequiredEnvVar("AZURE_APP_CLIENT_ID"),
+                appClientSecret = getRequiredEnvVar("AZURE_APP_CLIENT_SECRET"),
+                appWellKnownUrl = getRequiredEnvVar("AZURE_APP_WELL_KNOWN_URL"),
+                openidConfigTokenEndpoint = getRequiredEnvVar("AZURE_OPENID_CONFIG_TOKEN_ENDPOINT"),
             )
     }
 }
