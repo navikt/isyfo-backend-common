@@ -11,6 +11,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.registerInstanceFactory
 import kotlinx.coroutines.runBlocking
+import no.nav.syfo.common.testutil.jwtWithNavident
 import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
 import no.nav.syfo.common.types.ident.Personident
 import no.nav.syfo.common.util.NAV_CALL_ID_HEADER
@@ -24,7 +25,7 @@ class TilgangskontrollExtensionsTest {
     private val action = "read aktivitetskrav"
     private val callId = "123"
     private val personident = Personident("12345678910")
-    private val token = "token"
+    private val token = jwtWithNavident("Z123456")
 
     private val tilgangskontrollClient = mockk<TilgangskontrollClient>()
 

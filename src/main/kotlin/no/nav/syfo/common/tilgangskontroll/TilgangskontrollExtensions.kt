@@ -71,6 +71,11 @@ public suspend fun RoutingContext.checkPersonAndSyfoTilgang(
 ) {
     val token = call.bearerTokenOrThrow(action)
     val callId = call.callIdOrGenerate()
+    val navBruker =
+        AuthorizedUser(
+            token = token,
+            navidentProvider = { call.navidentOrThrow(action) },
+        )
 
     val hasAccess =
         if (requiresWriteAccess) {
@@ -88,13 +93,13 @@ public suspend fun RoutingContext.checkPersonAndSyfoTilgang(
         }
 
     if (!hasAccess) {
-        throw TilgangDeniedException(action = action)
+        throw TilgangDeniedException(
+            action = action,
+            navident = navBruker.navident.value,
+        )
     } else {
         block(
-            AuthorizedUser(
-                token = token,
-                navidentProvider = { call.navidentOrThrow(action) },
-            ),
+            navBruker,
             personident,
             callId,
         )

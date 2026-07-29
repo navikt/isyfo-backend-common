@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.3.1]
+
+### Changed
+- `TilgangDeniedException` message now includes `navident` when provided, while keeping a default value for backward compatibility.
+
 ## [1.3.0]
 
 ### Added
