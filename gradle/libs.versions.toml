@@ -1,7 +1,7 @@
 [versions]
 jackson = "2.22.1"
 ktor = "3.5.1"
-logback = "1.5.38"
+logback = "1.6.1"
 micrometer = "1.17.0"
 mockk = "1.14.11"
 slf4j = "2.0.18"
@@ -11,7 +11,7 @@ junit = "6.1.2"
 kotlin = "2.4.10"
 ktlint = "14.2.0"
 testLogger = "4.0.0"
-versionsPlugin = "0.54.0"
+versionsPlugin = "0.56.0"
 
 [libraries]
 # Ktor
