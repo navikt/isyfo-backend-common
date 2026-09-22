@@ -82,11 +82,29 @@ get("/persons") {
 }
 ```
 
+### `filterPersonsUserHasKjerneregelAccessTo`
+
+Returns the subset of a list of persons that the veileder has access to per the tilgangsmaskin **kjerneregler** (core rules) rule set, which is a less strict rule set than the full (komplett) rule set used by `filterPersonsUserHasAccessTo` — a person may pass kjerneregler while failing the full rule set. Returns `null` on error or if `istilgangskontroll` responds with `403 Forbidden`, and an empty list if the veileder has access to none of the persons.
+
+```kotlin
+get("/persons/kjerneregler") {
+    val accessiblePersonidenter = filterPersonsUserHasKjerneregelAccessTo(
+        action = "filter persons by kjerneregler",
+        personidenter = listOf("12345678910", "10987654321"),
+        tilgangskontrollClient = tilgangskontrollClient,
+    )
+    call.respond(accessiblePersonidenter ?: emptyList())
+}
+```
+
 ## Access semantics
 
 - Read access (`requiresWriteAccess = false`, default): granted when `erGodkjent == true`
 - Write access (`requiresWriteAccess = true`): granted when `erGodkjent == true && fullTilgang == true`
 - A `403 Forbidden` from `istilgangskontroll` is treated as access denied (not an error)
+- Kjerneregler (`filterPersonsUserHasKjerneregelAccessTo`) is a narrower, less strict rule set than the
+  full (komplett) rule set used by the other access checks — a person may pass kjerneregler while failing
+  the full rule set, but not the other way around.
 
 ## Direct client usage
 
@@ -110,4 +128,11 @@ val accessiblePersonidenter: List<Personident>? = tilgangskontrollClient.filterP
     token = incomingToken,
     callId = "call-id",
 )
+
+val accessiblePersonidenterKjerneregler: List<Personident>? =
+    tilgangskontrollClient.filterPersonsUserHasKjerneregelAccessTo(
+        personidenter = listOf(Personident("12345678910"), Personident("10987654321")),
+        token = incomingToken,
+        callId = "call-id",
+    )
 ```

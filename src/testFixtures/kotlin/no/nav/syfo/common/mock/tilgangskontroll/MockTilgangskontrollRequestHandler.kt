@@ -7,6 +7,7 @@ import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.common.mock.receiveBody
 import no.nav.syfo.common.mock.respond
+import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient.Companion.TILGANGSKONTROLL_BRUKERE_KJERNEREGLER_PATH
 import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient.Companion.TILGANGSKONTROLL_BRUKERE_PATH
 import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient.Companion.TILGANGSKONTROLL_PERSON_PATH
 import no.nav.syfo.common.types.ident.Navident
@@ -42,11 +43,20 @@ enum class MockUserSyfoTilgangLevel {
  * @property personsUserHasAccessTo The set of [Personident]s this user is permitted to access.
  *   Only persons in this set will be returned or approved when access is checked,
  *   provided [syfoTilgangLevel] is not [MockUserSyfoTilgangLevel.NONE].
+ * @property personsUserHasKjerneregelAccessTo The set of [Personident]s this user is permitted to access per the
+ *   tilgangsmaskin kjerneregler (core rules) rule set, which is a less strict rule set than the full (komplett)
+ *   rule set represented by [personsUserHasAccessTo] — a person may pass kjerneregler while failing the full rule
+ *   set. Defaults to `null`, which falls back to [personsUserHasAccessTo] for tests that don't need to
+ *   distinguish between the two rule sets.
  */
 data class MockUserTilgangDetails(
     val syfoTilgangLevel: MockUserSyfoTilgangLevel,
     val personsUserHasAccessTo: Set<Personident>, // person idents this user has access to
-)
+    val personsUserHasKjerneregelAccessTo: Set<Personident>? = null,
+) {
+    val effectivePersonsUserHasKjerneregelAccessTo: Set<Personident>
+        get() = personsUserHasKjerneregelAccessTo ?: personsUserHasAccessTo
+}
 
 /**
  * Mock handler that simulates `istilgangskontroll` service endpoints.
@@ -54,6 +64,8 @@ data class MockUserTilgangDetails(
  * Handles the following endpoints:
  * - [TILGANGSKONTROLL_PERSON_PATH] — returns a [MockTilgangResponse] indicating whether the requesting
  *   user has access to a single person and level of Syfo access.
+ * - [TILGANGSKONTROLL_BRUKERE_KJERNEREGLER_PATH] — filters a list of person idents down to those the user has
+ *   access to per the tilgangsmaskin kjerneregler rule set.
  * - [TILGANGSKONTROLL_BRUKERE_PATH] — filters a list of person idents down to those the user has access to.
  *
  * Access is resolved by extracting the `NAVident` claim from the Bearer token in the request,
@@ -87,6 +99,20 @@ public fun MockRequestHandleScope.mockTilgangskontrollRequestHandler(
                     fullTilgang = userTilgangDetails.syfoTilgangLevel == MockUserSyfoTilgangLevel.FULL,
                 ),
             )
+        }
+
+        requestUrl.endsWith(TILGANGSKONTROLL_BRUKERE_KJERNEREGLER_PATH) -> {
+            val personidentsToFilter =
+                runBlocking<List<String>> { request.receiveBody() }.toList().map { Personident(it) }
+
+            if (userTilgangDetails == null || userTilgangDetails.syfoTilgangLevel == MockUserSyfoTilgangLevel.NONE) {
+                return respond(emptyList<String>())
+            }
+
+            val filteredPersonsUserHasAccessTo =
+                personidentsToFilter.filter { it in userTilgangDetails.effectivePersonsUserHasKjerneregelAccessTo }
+
+            respond(filteredPersonsUserHasAccessTo.map { it.value })
         }
 
         requestUrl.endsWith(TILGANGSKONTROLL_BRUKERE_PATH) -> {

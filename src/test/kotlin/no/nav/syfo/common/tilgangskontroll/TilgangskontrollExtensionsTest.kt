@@ -325,6 +325,129 @@ class TilgangskontrollExtensionsTest {
         }
     }
 
+    @Test
+    fun `filterPersonsUserHasAccessTo returns filtered list from client`() {
+        val routingContext =
+            routingContextWithHeaders(
+                headers =
+                    Headers.build {
+                        append(NAV_CALL_ID_HEADER, callId)
+                        append(HttpHeaders.Authorization, bearerHeader(token))
+                    },
+            )
+        val personidenter = listOf(personident, Personident("10987654321"))
+        val filteredPersonidenter = listOf(personident)
+
+        coEvery {
+            tilgangskontrollClient.filterPersonsUserHasAccessTo(personidenter, token, callId)
+        } returns filteredPersonidenter
+
+        val result =
+            runBlocking {
+                routingContext.filterPersonsUserHasAccessTo(
+                    action = action,
+                    personidenter = personidenter,
+                    tilgangskontrollClient = tilgangskontrollClient,
+                )
+            }
+
+        Assertions.assertEquals(filteredPersonidenter, result)
+        coVerify(exactly = 1) {
+            tilgangskontrollClient.filterPersonsUserHasAccessTo(personidenter, token, callId)
+        }
+    }
+
+    @Test
+    fun `filterPersonsUserHasAccessTo returns null when client returns null`() {
+        val routingContext =
+            routingContextWithHeaders(
+                headers =
+                    Headers.build {
+                        append(NAV_CALL_ID_HEADER, callId)
+                        append(HttpHeaders.Authorization, bearerHeader(token))
+                    },
+            )
+        val personidenter = listOf(personident)
+
+        coEvery {
+            tilgangskontrollClient.filterPersonsUserHasAccessTo(personidenter, token, callId)
+        } returns null
+
+        val result =
+            runBlocking {
+                routingContext.filterPersonsUserHasAccessTo(
+                    action = action,
+                    personidenter = personidenter,
+                    tilgangskontrollClient = tilgangskontrollClient,
+                )
+            }
+
+        Assertions.assertNull(result)
+    }
+
+    @Test
+    fun `filterPersonsUserHasKjerneregelAccessTo returns filtered list from client`() {
+        val routingContext =
+            routingContextWithHeaders(
+                headers =
+                    Headers.build {
+                        append(NAV_CALL_ID_HEADER, callId)
+                        append(HttpHeaders.Authorization, bearerHeader(token))
+                    },
+            )
+        val personidenter = listOf(personident, Personident("10987654321"))
+        val filteredPersonidenter = listOf(personident)
+
+        coEvery {
+            tilgangskontrollClient.filterPersonsUserHasKjerneregelAccessTo(personidenter, token, callId)
+        } returns filteredPersonidenter
+
+        val result =
+            runBlocking {
+                routingContext.filterPersonsUserHasKjerneregelAccessTo(
+                    action = action,
+                    personidenter = personidenter,
+                    tilgangskontrollClient = tilgangskontrollClient,
+                )
+            }
+
+        Assertions.assertEquals(filteredPersonidenter, result)
+        coVerify(exactly = 1) {
+            tilgangskontrollClient.filterPersonsUserHasKjerneregelAccessTo(personidenter, token, callId)
+        }
+        coVerify(exactly = 0) {
+            tilgangskontrollClient.filterPersonsUserHasAccessTo(any(), any(), any())
+        }
+    }
+
+    @Test
+    fun `filterPersonsUserHasKjerneregelAccessTo returns null when client returns null`() {
+        val routingContext =
+            routingContextWithHeaders(
+                headers =
+                    Headers.build {
+                        append(NAV_CALL_ID_HEADER, callId)
+                        append(HttpHeaders.Authorization, bearerHeader(token))
+                    },
+            )
+        val personidenter = listOf(personident)
+
+        coEvery {
+            tilgangskontrollClient.filterPersonsUserHasKjerneregelAccessTo(personidenter, token, callId)
+        } returns null
+
+        val result =
+            runBlocking {
+                routingContext.filterPersonsUserHasKjerneregelAccessTo(
+                    action = action,
+                    personidenter = personidenter,
+                    tilgangskontrollClient = tilgangskontrollClient,
+                )
+            }
+
+        Assertions.assertNull(result)
+    }
+
     private fun routingContextWithHeaders(headers: Headers): RoutingContext {
         val routingRequest = mockk<RoutingRequest>()
         every { routingRequest.headers } returns headers

@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.3.2]
+
+### Added
+- `TilgangskontrollClient.filterPersonsUserHasKjerneregelAccessTo(...)` — filters a list of personidenter down to those the veileder has access to per the tilgangsmaskin kjerneregler (core rules) rule set, a less strict rule set than the full (komplett) rule set used by `filterPersonsUserHasAccessTo`.
+- `RoutingContext.filterPersonsUserHasKjerneregelAccessTo(...)` — Ktor route helper mirroring `filterPersonsUserHasAccessTo`, backed by the new client method.
+- `MockTilgangskontrollRequestHandler` now supports the `istilgangskontroll` kjerneregler bulk endpoint.
+
+### Changed
+- `MockUserTilgangDetails` (test fixtures) has a new optional `personsUserHasKjerneregelAccessTo` property that defaults to `personsUserHasAccessTo` for backward compatibility.
+
 ## [1.3.1]
 
 ### Changed

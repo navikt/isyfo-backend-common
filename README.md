@@ -10,8 +10,8 @@ Shared Kotlin utility library for iSyfo backend Ktor services. Intended to grow 
 - Both implement `OboTokenProvider` and `SystemTokenProvider`
 
 ### Tilgangskontroll
-- `TilgangskontrollClient` — read/write access checks against `istilgangskontroll`
-- Ktor `RoutingContext` extension helpers such as `checkPersonAndSyfoTilgang(...)`
+- `TilgangskontrollClient` — read/write access checks against `istilgangskontroll`, including bulk filtering by full (komplett) or kjerneregler (core rules) rule sets
+- Ktor `RoutingContext` extension helpers such as `checkPersonAndSyfoTilgang(...)`, `filterPersonsUserHasAccessTo(...)` and `filterPersonsUserHasKjerneregelAccessTo(...)`
 
 ### Dokarkiv journalføring
 - `DokarkivClient` — journalfører (archives) documents to `dokarkiv` (Joark) using a system token

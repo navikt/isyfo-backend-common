@@ -128,3 +128,31 @@ public suspend fun RoutingContext.filterPersonsUserHasAccessTo(
 
     return personsUserHasAccessTo
 }
+
+/**
+ * [RoutingContext] tilgangskontroll helper to get the subset of a list of [personidenter] that the user has access
+ * to per the tilgangsmaskin kjerneregler (core rules) rule set, which is a less strict rule set than the full
+ * (komplett) rule set used by [filterPersonsUserHasAccessTo]. A person may pass kjerneregler while failing the
+ * full rule set.
+ *
+ * Returns null on error or if `istilgangskontroll` responds with status forbidden, and returns an empty
+ * list if user has access to none of the persons or if user does not have at least read access per Syfo Modia
+ * fagtilgang.
+ *
+ * @param action Short description of the action being performed, used in error messages.
+ * @param personidenter List of national identity numbers (fødselsnummer) to check if user has access to.
+ * @param tilgangskontrollClient Configured [TilgangskontrollClient] used to check access.
+ */
+public suspend fun RoutingContext.filterPersonsUserHasKjerneregelAccessTo(
+    action: String,
+    personidenter: List<Personident>,
+    tilgangskontrollClient: TilgangskontrollClient,
+): List<Personident>? {
+    val token = call.bearerTokenOrThrow(action)
+    val callId = call.callIdOrGenerate()
+
+    val personsUserHasAccessTo =
+        tilgangskontrollClient.filterPersonsUserHasKjerneregelAccessTo(personidenter, token, callId)
+
+    return personsUserHasAccessTo
+}
