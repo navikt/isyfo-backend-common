@@ -34,6 +34,8 @@ public class TilgangskontrollClient(
 ) {
     private val tilgangskontrollPersonUrl = "${clientConfig.baseUrl}$TILGANGSKONTROLL_PERSON_PATH"
     private val tilgangskontrollBrukereUrl = "${clientConfig.baseUrl}$TILGANGSKONTROLL_BRUKERE_PATH"
+    private val tilgangskontrollBrukereKjernereglerUrl =
+        "${clientConfig.baseUrl}$TILGANGSKONTROLL_BRUKERE_KJERNEREGLER_PATH"
 
     private suspend fun getTilgang(
         callId: String,
@@ -128,6 +130,43 @@ public class TilgangskontrollClient(
         personidenter: List<Personident>,
         token: String,
         callId: String,
+    ): List<Personident>? =
+        filterPersons(
+            url = tilgangskontrollBrukereUrl,
+            personidenter = personidenter,
+            token = token,
+            callId = callId,
+        )
+
+    /**
+     * Returns the subset of a list of [personidenter] that the user has access to per the tilgangsmaskin
+     * kjerneregler (core rules) rule set, which is a less strict rule set than the full (komplett) rule set
+     * used by [filterPersonsUserHasAccessTo]. A person may pass kjerneregler while failing the full rule set.
+     *
+     * Returns null on error or if istilgangskontroll responds with status forbidden, and returns an empty
+     * list if user has access to none of the persons or if user does not have at least read access per Syfo Modia
+     * fagtilgang.
+     *
+     * @param personidenter List of national identity numbers (fødselsnummer) to check if user has access to.
+     * @param token The user's incoming ****** (without the "Bearer " prefix).
+     */
+    public suspend fun filterPersonsUserHasKjerneregelAccessTo(
+        personidenter: List<Personident>,
+        token: String,
+        callId: String,
+    ): List<Personident>? =
+        filterPersons(
+            url = tilgangskontrollBrukereKjernereglerUrl,
+            personidenter = personidenter,
+            token = token,
+            callId = callId,
+        )
+
+    private suspend fun filterPersons(
+        url: String,
+        personidenter: List<Personident>,
+        token: String,
+        callId: String,
     ): List<Personident>? {
         val oboToken =
             oboTokenProvider.getOnBehalfOfToken(
@@ -137,7 +176,7 @@ public class TilgangskontrollClient(
 
         return try {
             val response: HttpResponse =
-                httpClient.post(tilgangskontrollBrukereUrl) {
+                httpClient.post(url) {
                     header(HttpHeaders.Authorization, bearerHeader(oboToken))
                     header(NAV_CALL_ID_HEADER, callId)
                     accept(ContentType.Application.Json)
@@ -164,5 +203,6 @@ public class TilgangskontrollClient(
 
         public const val TILGANGSKONTROLL_PERSON_PATH: String = "/api/tilgang/navident/person"
         public const val TILGANGSKONTROLL_BRUKERE_PATH: String = "/api/tilgang/navident/brukere"
+        public const val TILGANGSKONTROLL_BRUKERE_KJERNEREGLER_PATH: String = "/api/tilgang/navident/brukere/kjerneregler"
     }
 }
