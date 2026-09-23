@@ -1,6 +1,6 @@
 [versions]
 jackson = "2.22.1"
-ktor = "3.5.1"
+ktor = "3.6.0"
 logback = "1.5.38"
 micrometer = "1.17.0"
 mockk = "1.14.11"
