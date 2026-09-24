@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.3.3]
+
+### Changed
+- Bump Ktor from `3.5.1` to `3.6.0`.
+
 ## [1.3.2]
 
 ### Added
